@@ -66,7 +66,6 @@ namespace GCNet.CryptoLib
             byte[] hmac = new byte[10];
 
             packetSize = BitConverter.GetBytes((short)(2 + data.Length + 10));
-            Array.Reverse(packetSize);
 
             hmac = CryptoGenerators.GenerateHmac(data, hmacKey);
 
