@@ -5,4 +5,4 @@ The **CryptoLib** assembly provides some core features like packet encryption an
 
 The **PacketLib** assembly gives an I/O packet managing by providing compression, data reading and writing in addition to the own cryptographic functions.
 ## Build and Binaries
-To build the project, you should use Visual Studio 2015 with .NET Framework 4.5.2. For those who wish, [here](https://www.google.com) is the latest precompiled binary.
+To build the project, you should use Visual Studio 2015 with .NET Framework 4.5.2. For those who wish, [here](https://www.dropbox.com/s/7tnze11iyc6kxri/GCNet.zip?dl=0) is the latest precompiled binary.
