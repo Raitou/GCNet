@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Syntax Dev")]
 [assembly: AssemblyProduct("GCNet")]
-[assembly: AssemblyCopyright("Copyright © SyntaxDev 2016")]
+[assembly: AssemblyCopyright("Copyright © 2016 SyntaxDev")]
 [assembly: AssemblyTrademark("GCNet™")]
 [assembly: AssemblyCulture("")]
 
