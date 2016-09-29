@@ -1,5 +1,5 @@
 # GCNet
-GCNet is a Grand Chase networking library made by SyntaxDev which provides cryptography and packet-related features.
+GCNet is a Grand Chase networking library created around season Eternal by SyntaxDev which provides cryptography and packet-related features.
 ## Features
 The **CryptoLib** assembly provides some core features like packet encryption and decryption, HMAC packet hashing, key generation and cryptography constants.
 
