@@ -1,4 +1,22 @@
-﻿using GCNet.CryptoLib;
+﻿//-----------------------------------------------------------------------
+// GCNet - A Grand Chase Networking Library
+// Copyright © 2016  SyntaxDev
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//-----------------------------------------------------------------------
+
+using GCNet.CryptoLib;
 using GCNet.PacketLib.Abstract;
 using System;
 using System.Text;
@@ -29,8 +47,8 @@ namespace GCNet.PacketLib
         /// <param name="prefix">The 6 bytes between the packet size and the IV</param>
         public byte[] Assemble(byte[] key, byte[] hmacKey, byte[] prefix)
         {
-            byte[] IV = CryptoGenerators.GenerateIV();           
-            
+            byte[] IV = CryptoGenerators.GenerateIV();
+
             byte[] dataToAssemble = Util.ConcatBytes(
                 prefix,
                 Util.ConcatBytes(IV, CryptoFunctions.EncryptPacket(data, key, IV)));
@@ -135,17 +153,9 @@ namespace GCNet.PacketLib
         /// <param name="valueToWrite">Value to be written</param>
         public void WriteData(string valueToWrite)
         {
-            string outputString = "";
-
-            for (int i = 0; i < valueToWrite.Length; i++)
-            {
-                outputString += valueToWrite[i] + "\0";
-            }
-
-            WriteBytes(Encoding.ASCII.GetBytes(outputString));
+            WriteBytes(Encoding.ASCII.GetBytes(valueToWrite));
         }
         #endregion
-
         #region Write Reversed Data
         /// <summary>
         /// Writes the reversed specified byte array to the packet
@@ -204,6 +214,21 @@ namespace GCNet.PacketLib
             WriteBytes(bytesToWrite);
         }
         #endregion
+
+        /// <summary>
+        /// Pads with null characters (00) and writes the specified string to the packet
+        /// </summary>
+        /// <param name="valueToWrite">Value to be written</param>
+        public void WritePaddedString(string valueToWrite)
+        {
+            string outputString = string.Empty;
+
+            for (int i = 0; i < valueToWrite.Length; i++)
+            {
+                outputString += valueToWrite[i] + "\0";
+            }
+            WriteBytes(Encoding.ASCII.GetBytes(outputString));
+        }
 
         /// <summary>
         /// Writes the specified bytes to the packet data

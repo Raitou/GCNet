@@ -1,4 +1,22 @@
-﻿using GCNet.CryptoLib;
+﻿//-----------------------------------------------------------------------
+// GCNet - A Grand Chase Networking Library
+// Copyright © 2016  SyntaxDev
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//-----------------------------------------------------------------------
+
+using GCNet.CryptoLib;
 using GCNet.PacketLib.Abstract;
 using System;
 using System.Text;
@@ -158,7 +176,18 @@ namespace GCNet.PacketLib
         /// <param name="length">String length</param>
         public string ReadString(int index, int length)
         {
-            return Encoding.ASCII.GetString(ReadBytes(index, length)).Replace("\0", string.Empty);            
+            return Encoding.ASCII.GetString(ReadBytes(index, length));            
+        }
+
+        /// <summary>
+        /// Reads a string padded with null characters from the packet data starting at a specified index
+        /// </summary>
+        /// <param name="index">Index where the reading begins</param>
+        /// <param name="length">String length</param>
+        /// <returns></returns>
+        public string ReadPaddedString(int index, int length)
+        {
+            return Encoding.ASCII.GetString(ReadBytes(index, length)).Replace("\0", string.Empty);
         }
     }
 }
