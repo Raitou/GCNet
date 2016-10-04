@@ -87,13 +87,9 @@ namespace GCNet.CryptoLib
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(packetSize);
-            }
-<<<<<<< HEAD
-
-=======
-            
->>>>>>> origin/master
+            }            
             hmac = CryptoGenerators.GenerateHmac(data, hmacKey);
+            
             // Concatenates size + (prefix + IV + encrypted data) + hmac, composing the assembled packet
             return Util.ConcatBytes(packetSize, Util.ConcatBytes(data, hmac));
         }
