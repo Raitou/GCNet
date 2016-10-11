@@ -45,7 +45,7 @@ namespace GCNet.PacketLib
             
             if (data.Length > 12)
             {
-                if (ReadByte(11) == 0x78 && ReadByte(12) == 0x01)
+                if (ReadByte(6) == 0x01)
                 {
                     data = Compression.UncompressPacket(data);
                 }
