@@ -216,18 +216,12 @@ namespace GCNet.PacketLib
         #endregion
 
         /// <summary>
-        /// Pads with null characters (00) and writes the specified string to the packet
+        /// Writes a specified unicode string to the packet
         /// </summary>
         /// <param name="valueToWrite">Value to be written</param>
-        public void WritePaddedString(string valueToWrite)
+        public void WriteGCString(string valueToWrite)
         {
-            string outputString = string.Empty;
-
-            for (int i = 0; i < valueToWrite.Length; i++)
-            {
-                outputString += valueToWrite[i] + "\0";
-            }
-            WriteBytes(Encoding.ASCII.GetBytes(outputString));
+            WriteBytes(Encoding.Unicode.GetBytes(valueToWrite));
         }
 
         /// <summary>
