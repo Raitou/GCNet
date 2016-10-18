@@ -180,14 +180,13 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
-        /// Reads a string padded with null characters from the packet data starting at a specified index
+        /// Reads an unicode string from the packet data starting at a specified index
         /// </summary>
         /// <param name="index">Index where the reading begins</param>
         /// <param name="length">String length</param>
-        /// <returns></returns>
-        public string ReadPaddedString(int index, int length)
+        public string ReadGCString(int index, int length)
         {
-            return Encoding.ASCII.GetString(ReadBytes(index, length)).Replace("\0", string.Empty);
+            return Encoding.Unicode.GetString(ReadBytes(index, length));
         }
     }
 }
