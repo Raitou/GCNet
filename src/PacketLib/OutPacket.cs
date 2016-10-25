@@ -103,12 +103,22 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// Corrects the size contained in the payload data.
         /// </summary>
         /// <param name="payloadData">The raw payload data.</param>
         private static void FixSize(byte[] payloadData)
         {
             byte[] dataSizeBytes = BigEndian.GetBytes(payloadData.Length - 10);
+=======
+        /// Writes a specified unicode string to the packet
+        /// </summary>
+        /// <param name="valueToWrite">Value to be written</param>
+        public void WriteGCString(string valueToWrite)
+        {
+            WriteBytes(Encoding.Unicode.GetBytes(valueToWrite));
+        }
+>>>>>>> origin/master
 
             payloadData[2] = dataSizeBytes[0];
             payloadData[3] = dataSizeBytes[1];
