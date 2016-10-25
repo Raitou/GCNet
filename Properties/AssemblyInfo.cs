@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("GCNet")]
-[assembly: AssemblyDescription("A networking Grand Chase library")]
+[assembly: AssemblyDescription("A Grand Chase Networking Library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Syntax Dev")]
 [assembly: AssemblyProduct("GCNet")]
-[assembly: AssemblyCopyright("Copyright © 2016 SyntaxDev")]
-[assembly: AssemblyTrademark("GCNet™")]
+[assembly: AssemblyCopyright("Copyright ©  2016 SyntaxDev")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("11556a91-3732-46f2-b7f0-ecd686308eb9")]
+[assembly: Guid("4b6d2250-af2b-4049-849a-3ec787e3118f")]
 
 // Version information for an assembly consists of the following four values:
 //

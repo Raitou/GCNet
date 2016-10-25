@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// GCNet - A Grand Chase Networking Library
+// GCLib - A Grand Chase KOM Library
 // Copyright © 2016  SyntaxDev
 //
 // This program is free software: you can redistribute it and/or modify
@@ -13,29 +13,31 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 
-namespace GCNet.CryptoLib
+using GCNet.Util;
+
+namespace GCNet.PacketLib.Writer
 {
     /// <summary>
-    /// Provides the basic cryptographic constants used in Grand Chase Networking
+    /// Represents the base class for the packet writers.
     /// </summary>
-    public static class CryptoConstants
+    public class BaseWriter
     {
         /// <summary>
-        /// Default DES encryption key used at the start of the Grand Chase connection
+        /// Gets or sets the current data being written.
         /// </summary>
-        public static readonly byte[] GC_DES_KEY = { 0xC7, 0xD8, 0xC4, 0xBF, 0xB5, 0xE9, 0xC0, 0xFD };
+        protected byte[] Data { get; private set; } = new byte[0];
+
 
         /// <summary>
-        /// Default HMAC MD5 key used at the start of the Grand Chase connection
+        /// Writes the specified bytes to the current data.
         /// </summary>
-        public static readonly byte[] GC_HMAC_KEY = { 0xC0, 0xD3, 0xBD, 0xC3, 0xB7, 0xCE, 0xB8, 0xB8 };
-
-        /// <summary>
-        /// Size of the truncated generated HMAC 
-        /// </summary>
-        public static readonly byte GC_HMAC_SIZE = 10;
+        /// <param name="bytes">The bytes to be written.</param>
+        public void WriteData(byte[] bytes)
+        {
+            Data = Sequence.Concat(Data, bytes);
+        }
     }
 }

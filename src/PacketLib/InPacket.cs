@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// GCNet - A Grand Chase Networking Library
+// GCLib - A Grand Chase KOM Library
 // Copyright © 2016  SyntaxDev
 //
 // This program is free software: you can redistribute it and/or modify
@@ -13,181 +13,88 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 
-using GCNet.CryptoLib;
-using GCNet.PacketLib.Abstract;
-using System;
-using System.Text;
+using GCNet.CoreLib;
+using GCNet.PacketLib.Compression;
+using GCNet.PacketLib.Reader;
 
 namespace GCNet.PacketLib
 {
     /// <summary>
-    /// Represents an incoming packet
+    /// Represents an incoming packet.
     /// </summary>
-    public class InPacket : AbstractPacket
+    public class InPacket
     {
         /// <summary>
-        /// The packet ID
+        /// Gets the (decrypted and uncompressed) payload data of the current packet.
         /// </summary>
-        public short ID { get; protected set; }
+        public byte[] PayloadData { get; }
 
         /// <summary>
-        /// Creates a new instance of InPacket. It reads the packet buffer, decrypts and, if needed, decompress it. Then, it stores the resulting data in 'Data' and the packet id in 'ID'
+        /// Gets the size of the current packet.
         /// </summary>
-        /// <param name="packetBuffer">Packet data the way it was received</param>
-        /// <param name="key">Encryption Key</param>
-        public InPacket(byte[] packetBuffer, byte[] key)
+        public short Size { get; private set; }
+        /// <summary>
+        /// Gets the prefix of the current packet.
+        /// </summary>
+        public short Prefix { get; private set; }
+        /// <summary>
+        /// Gets the count in the current packet header.
+        /// </summary>
+        public int Count { get; private set; }
+
+        /// <summary>
+        /// Gets the current packet ID.
+        /// </summary>
+        public short Id { get; private set; }
+
+
+        /// <summary>
+        /// Initializes a new instance of InPacket from the given packet buffer and crypto session.
+        /// </summary>
+        /// <param name="packetBuffer">The packet buffer the way it was received.</param>
+        /// <param name="crypto">The current crypto session.</param>
+        public InPacket(byte[] packetBuffer, CryptoSession crypto)
         {
-            data = packetBuffer;
-            data = CryptoFunctions.DecryptPacket(data, key);
+            ParseHeader(packetBuffer);
+            PayloadData = ProcessData(packetBuffer, crypto);
             
-            if (data.Length > 12)
+            PayloadReader reader = new PayloadReader(PayloadData);
+            Id = reader.ReadInt16();
+        }
+
+
+        /// <summary>
+        /// Processes the current packet data and returns the raw packet payload.
+        /// </summary>
+        /// <param name="packetBuffer">The packet buffer the way it was received.</param>
+        /// <param name="crypto">The current crypto session.</param>
+        /// <returns>The packet payload (decrypted and uncompressed).</returns>
+        private static byte[] ProcessData(byte[] packetBuffer, CryptoSession crypto)
+        {
+            byte[] data = crypto.DecryptPacket(packetBuffer);
+
+            PayloadReader reader = new PayloadReader(data, 6);
+            if (reader.ReadBool())
             {
-                if (ReadByte(6) == 0x01)
-                {
-                    data = Compression.UncompressPacket(data);
-                }
+                data = PayloadCompression.Decompress(data);
             }
-            ID = ReadInt16(0);
+            return data;
         }
 
         /// <summary>
-        /// Reads a specified byte array from the packet data
+        /// Parses the header of the current packet and assigns the read values to the proper variables.
         /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        /// <param name="length">Amount of bytes to be read</param>
-        /// <param name="reverse">Reading mode</param>
-        public byte[] ReadBytes(int index, int length)
+        /// <param name="packetBuffer">The packet buffer the way it was received.</param>
+        private void ParseHeader(byte[] packetBuffer)
         {
-            byte[] output = new byte[length];
-            Buffer.BlockCopy(data, index, output, 0, length);
+            HeaderReader reader = new HeaderReader(packetBuffer);
 
-            return output;
-        }
-
-        /// <summary>
-        /// Reads a byte from the packet data at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        public byte ReadByte(int index)
-        {
-            return data[index];
-        }
-
-        /// <summary>
-        /// Reads a boolean from the packet data at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        public bool ReadBool(int index)
-        {
-            return Convert.ToBoolean(data[index]);
-        }
-
-        /// <summary>
-        /// Reads a short from the packet data at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        public short ReadInt16(int index)
-        {
-            byte[] bytesToRead = ReadBytes(index, sizeof(short));
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToRead);
-            }
-            return BitConverter.ToInt16(bytesToRead, 0);
-        }
-
-        /// <summary>
-        /// Reads a reversed short from the packet data at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param> 
-        public short ReadReversedInt16(int index)
-        {
-            byte[] bytesToRead = ReadBytes(index, sizeof(short));
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToRead);
-            }
-            return BitConverter.ToInt16(bytesToRead, 0);
-        }
-
-        /// <summary>
-        /// Reads an integer from the packet data at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        public int ReadInt32(int index)
-        {
-            byte[] bytesToRead = ReadBytes(index, sizeof(int));
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToRead);
-            }
-            return BitConverter.ToInt32(bytesToRead, 0);
-        }
-
-        /// <summary>
-        /// Reads a reversed integer from the packet data at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        public int ReadReversedInt32(int index)
-        {
-            byte[] bytesToRead = ReadBytes(index, sizeof(int));
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToRead);
-            }
-            return BitConverter.ToInt32(bytesToRead, 0);
-        }
-
-        /// <summary>
-        /// Reads a long from the packet data at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        public long ReadInt64(int index)
-        {
-            byte[] bytesToRead = ReadBytes(index, sizeof(long));
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToRead);
-            }
-            return BitConverter.ToInt64(bytesToRead, 0);
-        }
-
-        /// <summary>
-        /// Reads a reversed long from the packet data at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        public long ReadReversedInt64(int index)
-        {
-            byte[] bytesToRead = ReadBytes(index, sizeof(long));
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToRead);
-            }
-            return BitConverter.ToInt64(bytesToRead, 0);
-        }
-
-        /// <summary>
-        /// Reads a string from the packet data starting at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param> 
-        /// <param name="length">String length</param>
-        public string ReadString(int index, int length)
-        {
-            return Encoding.ASCII.GetString(ReadBytes(index, length));            
-        }
-
-        /// <summary>
-        /// Reads a string padded with null characters from the packet data starting at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        /// <param name="length">String length</param>
-        /// <returns></returns>
-        public string ReadPaddedString(int index, int length)
-        {
-            return Encoding.ASCII.GetString(ReadBytes(index, length)).Replace("\0", string.Empty);
+            Size = reader.ReadInt16();
+            Prefix = reader.ReadInt16();
+            Count = reader.ReadInt32();
         }
     }
 }

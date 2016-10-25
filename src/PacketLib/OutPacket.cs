@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// GCNet - A Grand Chase Networking Library
+// GCLib - A Grand Chase KOM Library
 // Copyright © 2016  SyntaxDev
 //
 // This program is free software: you can redistribute it and/or modify
@@ -13,230 +13,107 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// along with this program. If not, see <http://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 
-using GCNet.CryptoLib;
-using GCNet.PacketLib.Abstract;
-using System;
-using System.Text;
+using GCNet.CoreLib;
+using GCNet.PacketLib.Compression;
+using GCNet.PacketLib.Writer;
+using GCNet.Util;
+using GCNet.Util.Endianness;
 
 namespace GCNet.PacketLib
 {
     /// <summary>
-    /// Represents an outgoing packet
+    /// Represents an outgoing packet.
     /// </summary>
-    public class OutPacket : AbstractPacket
+    public class OutPacket
     {
         /// <summary>
-        /// Creates a new instance of OutPacket, starting by writing the packet id to the data.
-        /// <para>* After this, the packet data should be written through the 'Write' methods and, finally, the function 'AssemblePacket' called, returning the packet ready to be sent.</para>
+        /// Gets the packet buffer of the current outgoing packet.
         /// </summary>
-        /// <param name="packetID">The outgoing packet ID</param>
-        public OutPacket(short packetID)
+        public byte[] Data { get; }
+
+
+        /// <summary>
+        /// Initializes a new instance of OutPacket for the keys definition packet (ID 0x0001) from the given
+        /// payload data, crypto session, auth session and count.
+        /// </summary>
+        /// <param name="payloadData">The raw payload data.</param>
+        /// <param name="crypto">The crypto session to be used.</param>
+        /// <param name="auth">The auth session to be used.</param>
+        /// <param name="firstCount">The first packet count.</param>
+        public OutPacket(byte[] payloadData, CryptoSession crypto, AuthSession auth, int firstCount)
         {
-            data = new byte[0];
-            WriteData(packetID);
+            HeaderWriter headerWriter = new HeaderWriter();
+            headerWriter.WriteData((short)(0));
+            headerWriter.WriteData(firstCount);
+
+            Data = AssemblePacket(payloadData, crypto, auth, headerWriter.GetHeader());
         }
 
         /// <summary>
-        /// Returns the packet data ready to be sent
+        /// Initializes a new instance of OutPacket from the given payload data, crypto session, prefix and count.
         /// </summary>
-        /// <param name="key">Encryption key</param>
-        /// <param name="hmacKey">HMAC generation key</param>
-        /// <param name="prefix">The 6 bytes between the packet size and the IV</param>
-        public byte[] Assemble(byte[] key, byte[] hmacKey, byte[] prefix)
+        /// <param name="payloadData">The raw payload data.</param>
+        /// <param name="crypto">The crypto session to be used.</param>
+        /// <param name="auth">The auth session to be used.</param>
+        /// <param name="prefix">The packet prefix.</param>
+        /// <param name="count">The current count of sent packets.</param>
+        public OutPacket(byte[] payloadData, CryptoSession crypto, AuthSession auth, short prefix, int count)
         {
-            byte[] IV = CryptoGenerators.GenerateIV();
+            HeaderWriter headerWriter = new HeaderWriter();
+            headerWriter.WriteData(prefix);
+            headerWriter.WriteData(count);
 
-            byte[] dataToAssemble = Util.ConcatBytes(
-                prefix,
-                Util.ConcatBytes(IV, CryptoFunctions.EncryptPacket(data, key, IV)));
-
-            return CryptoFunctions.ClearPacket(dataToAssemble, hmacKey);
+            Data = AssemblePacket(payloadData, crypto, auth, headerWriter.GetHeader());
         }
 
-        /// <summary>
-        /// Compress the data and returns the packet ready to be sent
-        /// </summary>
-        /// <param name="key">Encryption key</param>
-        /// <param name="hmacKey">HMAC generation key</param>
-        /// <param name="prefix">The 6 bytes between the packet size and the IV</param>
-        public byte[] CompressAndAssemble(byte[] key, byte[] hmacKey, byte[] prefix)
-        {
-            byte[] compressedData = Compression.CompressPacket(data);
-            byte[] IV = CryptoGenerators.GenerateIV();
-
-            byte[] dataToAssemble = Util.ConcatBytes(
-                prefix,
-                Util.ConcatBytes(IV, CryptoFunctions.EncryptPacket(compressedData, key, IV)));
-
-            return CryptoFunctions.ClearPacket(dataToAssemble, hmacKey);
-        }
-
-        #region Write Data
-        /// <summary>
-        /// Writes a specified byte array to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be written</param>
-        public void WriteData(byte[] valueToWrite)
-        {
-            WriteBytes(valueToWrite);
-        }
 
         /// <summary>
-        /// Writes a specified byte to the packet
+        /// Assembles the current outgoing packet from the given payload data, crypto session, auth session and partial header.
         /// </summary>
-        /// <param name="valueToWrite">Value to be written</param>
-        public void WriteData(byte valueToWrite)
+        /// <param name="payloadData">The raw payload data.</param>
+        /// <param name="crypto">The crypto session being used.</param>
+        /// <param name="auth">The auth session being used.</param>
+        /// <param name="partialHeader">The outer packet header, except for the 2 first bytes (packet size).</param>
+        /// <returns>The assembled packet, ready to be sent.</returns>
+        private byte[] AssemblePacket(byte[] payloadData, CryptoSession crypto, AuthSession auth, byte[] partialHeader)
         {
-            WriteBytes(new byte[] { valueToWrite });
-        }
-
-        /// <summary>
-        /// Writes a specified boolean to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be written</param>
-        public void WriteData(bool valueToWrite)
-        {
-            WriteBytes(new byte[] { Convert.ToByte(valueToWrite) });
-        }
-
-        /// <summary>
-        /// Writes a specified short to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be written</param>
-        public void WriteData(short valueToWrite)
-        {
-            byte[] bytesToWrite = BitConverter.GetBytes(valueToWrite);
-
-            if (BitConverter.IsLittleEndian)
+            PayloadReader reader = new PayloadReader(payloadData, 6);
+            if (reader.ReadBool())
             {
-                Array.Reverse(bytesToWrite);
+                payloadData = PayloadCompression.Compress(payloadData);
             }
-            WriteBytes(bytesToWrite);
+
+            FixSize(payloadData);
+
+            byte[] iv = Generate.IV();
+            byte[] encryptedData = crypto.EncryptPacket(payloadData, iv);
+
+            HeaderWriter headerWriter = new HeaderWriter();
+            headerWriter.WriteData((short)(16 + encryptedData.Length + 10));
+            headerWriter.WriteData(partialHeader);
+            headerWriter.WriteData(iv);
+
+            byte[] partialBuffer = Sequence.Concat(headerWriter.GetHeader(), encryptedData);
+            byte[] hmac = auth.GetHmac(partialBuffer);
+
+            return Sequence.Concat(partialBuffer, hmac);
         }
 
         /// <summary>
-        /// Writes a specified integer to the packet
+        /// Corrects the size contained in the payload data.
         /// </summary>
-        /// <param name="valueToWrite">Value to be written</param>
-        public void WriteData(int valueToWrite)
+        /// <param name="payloadData">The raw payload data.</param>
+        private static void FixSize(byte[] payloadData)
         {
-            byte[] bytesToWrite = BitConverter.GetBytes(valueToWrite);
+            byte[] dataSizeBytes = BigEndian.GetBytes(payloadData.Length - 10);
 
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToWrite);
-            }
-            WriteBytes(bytesToWrite);
-        }
-
-        /// <summary>
-        /// Writes a specified long to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be written</param>
-        public void WriteData(long valueToWrite)
-        {
-            byte[] bytesToWrite = BitConverter.GetBytes(valueToWrite);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToWrite);
-            }
-            WriteBytes(bytesToWrite);
-        }
-
-        /// <summary>
-        /// Writes a specified string to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be written</param>
-        public void WriteData(string valueToWrite)
-        {
-            WriteBytes(Encoding.ASCII.GetBytes(valueToWrite));
-        }
-        #endregion
-        #region Write Reversed Data
-        /// <summary>
-        /// Writes the reversed specified byte array to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be reversed and written</param>
-        public void WriteReversedData(byte[] valueToWrite)
-        {
-            Array.Reverse(valueToWrite);
-            WriteBytes(valueToWrite);
-        }
-
-        /// <summary>
-        /// Writes the reversed specified short to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be reversed and written</param>
-        public void WriteReversedData(short valueToWrite)
-        {
-            byte[] bytesToWrite = BitConverter.GetBytes(valueToWrite);
-
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToWrite);
-            }
-            WriteBytes(bytesToWrite);
-        }
-
-        /// <summary>
-        /// Writes the reversed specified integer to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be reversed and written</param>
-        public void WriteReversedData(int valueToWrite)
-        {
-            byte[] bytesToWrite = BitConverter.GetBytes(valueToWrite);
-
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToWrite);
-            }
-            WriteBytes(bytesToWrite);
-
-            Console.WriteLine(BitConverter.ToString(bytesToWrite).Replace('-', ' '));
-        }
-
-        /// <summary>
-        /// Writes the reversed specified long to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be reversed and written</param>
-        public void WriteReversedData(long valueToWrite)
-        {
-            byte[] bytesToWrite = BitConverter.GetBytes(valueToWrite);
-
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytesToWrite);
-            }
-            WriteBytes(bytesToWrite);
-        }
-        #endregion
-
-        /// <summary>
-        /// Pads with null characters (00) and writes the specified string to the packet
-        /// </summary>
-        /// <param name="valueToWrite">Value to be written</param>
-        public void WritePaddedString(string valueToWrite)
-        {
-            string outputString = string.Empty;
-
-            for (int i = 0; i < valueToWrite.Length; i++)
-            {
-                outputString += valueToWrite[i] + "\0";
-            }
-            WriteBytes(Encoding.ASCII.GetBytes(outputString));
-        }
-
-        /// <summary>
-        /// Writes the specified bytes to the packet data
-        /// </summary>
-        /// <param name="bytes">Bytes to be written</param>
-        protected void WriteBytes(byte[] bytes)
-        {
-            data = Util.ConcatBytes(data, bytes);
+            payloadData[2] = dataSizeBytes[0];
+            payloadData[3] = dataSizeBytes[1];
+            payloadData[4] = dataSizeBytes[2];
+            payloadData[5] = dataSizeBytes[3];
         }
     }
 }

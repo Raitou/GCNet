@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{11556A91-3732-46F2-B7F0-ECD686308EB9}</ProjectGuid>
+    <ProjectGuid>{4B6D2250-AF2B-4049-849A-3EC787E3118F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GCNet</RootNamespace>
@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ionic.Zlib">
-      <HintPath>Dependencies\Ionic.Zlib.dll</HintPath>
+    <Reference Include="Ionic.Zlib, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Ionic.Zlib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -43,15 +45,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\CryptoLib\CryptoConstants.cs" />
-    <Compile Include="src\CryptoLib\CryptoFunctions.cs" />
-    <Compile Include="src\CryptoLib\CryptoGenerators.cs" />
-    <Compile Include="src\PacketLib\Abstract\AbstractPacket.cs" />
-    <Compile Include="src\PacketLib\Compression.cs" />
+    <Compile Include="src\CoreLib\Auth\AuthSession.cs" />
+    <Compile Include="src\CoreLib\Auth\MD5Hmac.cs" />
+    <Compile Include="src\CoreLib\Crypto\DESEncryption.cs" />
+    <Compile Include="src\CoreLib\Crypto\CryptoSession.cs" />
+    <Compile Include="src\CoreLib\Generate.cs" />
+    <Compile Include="src\PacketLib\Compression\PayloadCompression.cs" />
+    <Compile Include="src\PacketLib\Compression\ZLib.cs" />
     <Compile Include="src\PacketLib\InPacket.cs" />
     <Compile Include="src\PacketLib\OutPacket.cs" />
-    <Compile Include="src\Util.cs" />
+    <Compile Include="src\PacketLib\Reader\BaseReader.cs" />
+    <Compile Include="src\PacketLib\Writer\BaseWriter.cs" />
+    <Compile Include="src\PacketLib\Writer\HeaderWriter.cs" />
+    <Compile Include="src\PacketLib\Writer\PayloadWriter.cs" />
+    <Compile Include="src\PacketLib\Reader\HeaderReader.cs" />
+    <Compile Include="src\PacketLib\Reader\PayloadReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Util\Sequence.cs" />
+    <Compile Include="src\Util\Endianness\BigEndian.cs" />
+    <Compile Include="src\Util\Endianness\LittleEndian.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="lib\Ionic.Zlib.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
