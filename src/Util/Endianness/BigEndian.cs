@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// GCLib - A Grand Chase KOM Library
+// GCNet - A Grand Chase Networking Library
 // Copyright © 2016  SyntaxDev
 //
 // This program is free software: you can redistribute it and/or modify
