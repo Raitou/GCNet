@@ -92,20 +92,9 @@ namespace GCNet.PacketLib
         {
             HeaderReader reader = new HeaderReader(packetBuffer);
 
-<<<<<<< HEAD
             Size = reader.ReadInt16();
             Prefix = reader.ReadInt16();
             Count = reader.ReadInt32();
-=======
-        /// <summary>
-        /// Reads an unicode string from the packet data starting at a specified index
-        /// </summary>
-        /// <param name="index">Index where the reading begins</param>
-        /// <param name="length">String length</param>
-        public string ReadGCString(int index, int length)
-        {
-            return Encoding.Unicode.GetString(ReadBytes(index, length));
->>>>>>> origin/master
         }
     }
 }
