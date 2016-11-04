@@ -3,7 +3,7 @@ In Grand Chase, the packets are divided primarily into three sections: header, p
 
 > For demonstration purposes, we will be using the acknowledgement packet SHA_FILENAME_LIST (ID: 0x001C).
 
-If we had sniffed this packet, its data would look like this:
+If we had sniffed this packet, its buffer would look like this:
 
 > ![](http://i.imgur.com/zbJ7iV4.png)
 
@@ -11,7 +11,7 @@ Now let's analyze its parts:
 ## Header
 > 6A 00 E7 8E 02 00 00 00 58 58 58 58 58 58 58 58
 
-In all packets, it represents the first 16 bytes of the received *data*. It contains some basic informations about the packet, which will be explained in detail below.
+In all packets, it represents the first 16 bytes of the received *buffer*. It contains some basic informations about the packet, which will be explained in detail below.
 > Note: all the data in the header is written in the [little-endian](https://en.wikipedia.org/wiki/Endianness#Little-endian) format.
 
 ### Size
