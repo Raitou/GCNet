@@ -11,13 +11,13 @@ Now let's analyze its parts:
 ## Header
 > 6A 00 E7 8E 02 00 00 00 58 58 58 58 58 58 58 58
 
-In all packets, it represents the first 16 bytes of the received *buffer*. It contains some basic informations about the packet, which will be explained in detail below.
+In all packets, it represents the first 16 bytes of the received *data*. It contains some basic informations about the packet, which will be explained in detail below.
 > Note: all the data in the header is written in the [little-endian](https://en.wikipedia.org/wiki/Endianness#Little-endian) format.
 
 ### Size
 > ***6A 00*** E7 8E 02 00 00 00 58 58 58 58 58 58 58 58
 
-As the name suggests, it represents the packet's buffer length. It is in little-endian format, so it's actually _00 6A_, which, in decimal, is _106_. If you count each byte of our sniffed packet's data, you will realize that it contains exactly 106 bytes. :smiley:
+As the name suggests, it represents the packet's data length. It is in little-endian format, so it's actually _00 6A_, which, in decimal, is _106_. If you count each byte of our sniffed packet's data, you will realize that it contains exactly 106 bytes. :smiley:
 
 ### Prefix
 > 6A 00 ***E7 8E*** 02 00 00 00 58 58 58 58 58 58 58 58
