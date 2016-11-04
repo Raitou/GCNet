@@ -85,6 +85,8 @@ namespace GCNet.CoreLib
         /// <returns>The padded data.</returns>
         private byte[] PadData(byte[] data)
         {
+            // It's a little wrong, I'll soon fix it.
+            
             int paddingLength = 8 + ((8 - data.Length % 8) % 8);
             byte[] padding = new byte[paddingLength];
 
