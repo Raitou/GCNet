@@ -14,22 +14,22 @@ Now let's analyze its parts:
 In all packets, it represents the first 16 bytes of the received *buffer*. It contains some basic informations about the packet, which will be explained in detail below.
 > Note: all the data in the header is written in the [little-endian](https://en.wikipedia.org/wiki/Endianness#Little-endian) format.
 
-### Size
+## Size
 > ***6A 00*** E7 8E 02 00 00 00 58 58 58 58 58 58 58 58
 
 As the name suggests, it represents the packet's data length. It is in little-endian format, so it's actually _00 6A_, which, in decimal, is _106_. If you count each byte of our sniffed packet's data, you will realize that it contains exactly 106 bytes. :smiley:
 
-### Prefix
+## Prefix
 > 6A 00 ***E7 8E*** 02 00 00 00 58 58 58 58 58 58 58 58
 
 We're now faced with the *prefix*. These 2 bytes are present in all the packets and contains a random value which is generated at the beginning of the session and used for all the following packets. There's only one exception: the packet in which the session keys are defined, where the prefix is represented by _00 00_ (this packet will be particularly discussed later).
 
-### Count
+## Count
 > 6A 00 E7 8E ***02 00 00 00*** 58 58 58 58 58 58 58 58
 
 It's a 32-bit integer that represents the count of sent packets within a session. In our case, the packet count is 2 since it's _00 00 00 02_. Note that both client and server have their own counts. Like the prefix, the count has as exception the packet in which are defined the keys for the session.
 
-### IV (Initialization Vector)
+## IV (Initialization Vector)
 > 6A 00 E7 8E 02 00 00 00 ***58 58 58 58 58 58 58 58***
 
 It's the IV used to encrypt the packet's payload. Each packet has its own generated IV, which consists on 8 bytes equal ranging from _00_ to _FF_ in hex values. You should take a look at the [encryption section](./The%20Encryption.md#the-encryption) to have a better understanding of this concept.
