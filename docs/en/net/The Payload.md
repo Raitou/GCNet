@@ -64,6 +64,6 @@ Let's take a look at one compressed payload.
 
 Actually, only the highlighted portion is compressed: the header plus 4 bytes remains uncompressed, as well as the _00 00 00_ padding at the end.
 
-After the data is decompressed, it "becomes a normal packet" and may be read normally.
+After the data is decompressed, the payloads becomes "normal" and may be read normally.
 
 Further reading: [The Beginning of the Session](./The%20Beginning%20of%20the%20Session.md#the-beginning-of-the-session)
