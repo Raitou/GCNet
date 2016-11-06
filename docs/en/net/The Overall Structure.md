@@ -8,7 +8,7 @@ If we had sniffed this packet, its buffer would look like this:
 > ![](http://i.imgur.com/zbJ7iV4.png)
 
 Now let's analyze its parts:
-### Header
+## Header
 > 6A 00 E7 8E 02 00 00 00 58 58 58 58 58 58 58 58
 
 In all packets, it represents the first 16 bytes of the received *buffer*. It contains some basic informations about the packet, which will be explained in detail below.
@@ -34,12 +34,12 @@ It's a 32-bit integer that represents the count of sent packets within a session
 
 It's the IV used to encrypt the packet's payload. Each packet has its own generated IV, which consists on 8 bytes equal ranging from _00_ to _FF_ in hex values. You should take a look at the [encryption section](./The%20Encryption.md#the-encryption) to have a better understanding of this concept.
 
-### Payload (encrypted)
+## Payload (encrypted)
 > CD 05 A5 3D 7B 8C 1D CD 03 15 B1 DE 85 36 72 D9 1F B6 03 7D 77 5A 01 BE 78 D4 0A 22 EB 63 BB D1 77 D2 C6 9F DB 17 BC 0A E2 CF D8 75 B2 9E 2E 30 DD 24 3E AA 3E 5B 90 FE 61 F2 C2 D1 05 A7 1C FD 9E 1B 69 A3 76 CE 3A 9D 69 21 21 9B 82 D7 00 DF
 
 Located between the 16 first (header) and the 10 last (auth code) bytes, this is the main part of the packet. At first sight, it's encrypted and doesn't reveal much, but when decrypted, contains the effective data, the one that tell us something relevant such as the login inputted by the user or the information of the players inside a dungeon room. Due to its importance, the payload will be discussed in its [own](./The%20Payload.md#the-payload) section and likewise will be the [encryption](./The%20Encryption.md#the-encryption).
 
-### Authentication Code
+## Authentication Code
 > E3 57 33 57 A6 79 A3 F6 53 57
 
 Represented by the last 10 bytes of the buffer, this is the portion of the packet which is meant to assure the authenticity of the rest. In Grand Chase, it consists in a [MD5](https://en.wikipedia.org/wiki/MD5)-[HMAC](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code) (Hash-based Message Authentication Code). 
