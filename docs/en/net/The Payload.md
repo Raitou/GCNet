@@ -8,13 +8,14 @@ What you see below is the decrypted payload of our packet (now with the padding 
 As previously stated, it's the holder of the most important data in all the packet.
 
 Like the packet buffer, the decrypted payload has its sections: the header, the content and the null bytes padding. Again, let's explain them one by one.
-> Note: there are some exceptions to this division like the ping packet, whose payload contains only null bytes.
+> Note I: there are some exceptions to this division like the ping packet, whose payload contains only null bytes.
+
+> Note II: unlike the **packet's header**, all the data in the payload is written in the [big-endian](https://en.wikipedia.org/wiki/Endianness#Big-endian) format.
 
 ## Header
 > 00 1C 00 00 00 40 00
 
 The payload header contains three essential informations: packet ID, content size and compression flag. Next, we will take a closer look at these values.
-> Note: unlike the header, all the data in the payload is written in the [big-endian](https://en.wikipedia.org/wiki/Endianness#Big-endian) format.
 
 ### ID
 > ***00 1C*** 00 00 00 40 00
