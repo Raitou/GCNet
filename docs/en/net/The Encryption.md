@@ -13,7 +13,7 @@ Through the CBC mode, the data is processed in blocks of 8 bytes each. But what 
 ### Padding
 > ![](http://i.imgur.com/HR4kOAA.png)
 
-The whole thing you see above is the decrypted payload from our packet, but for now, let's limit ourselves only to the part in bold.
+The whole thing you see above is the decrypted payload from our packet, but for now, let's limit ourselves only to the part in red.
 
 This portion of the data is the _padding_. It serves to fill the data until it reaches a length divisible by block size (in our case, 8).
 
