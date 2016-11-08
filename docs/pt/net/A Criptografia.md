@@ -11,11 +11,11 @@ O processo de criptografia usa um _IV_, uma _chave_ de 8 bytes e um _plaintext_ 
 Pelo modo CBC, os dados são processados em blocos de 8 bytes cada. Mas e se o tamanho do nosso payload não for divisível por 8? É o que veremos abaixo.
 
 ### Padding
-> 00 1C 00 00 00 40 00 00 00 00 03 00 00 00 0C 61 00 69 00 2E 00 6B 00 6F 00 6D 00 00 00 00 10 6D 00 61 00 69 00 6E 00 2E 00 65 00 78 00 65 00 00 00 00 14 73 00 63 00 72 00 69 00 70 00 74 00 2E 00 6B 00 6F 00 6D 00 00 00 00 ***00 01 02 03 04 04***
+> ![](http://i.imgur.com/HR4kOAA.png)
 
 O que você vê aí acima é o payload decriptado do nosso pacote, mas, por ora, vamos nos limitar apenas à parte destacada. 
 
-Essa parte em destaque é o _padding_. Ele serve para preencher os dados até que eles chegem a um determinado tamanho divisível pelo tamanho do bloco (no nosso caso, 8).
+Essa parte em vermelho é o _padding_. Ele serve para preencher os dados até que eles chegem a um determinado tamanho divisível pelo tamanho do bloco (no nosso caso, 8).
 
 Tomemos nosso payload aqui como exemplo. Sem padding, seu tamanho seria 74, mas 74 não é divisível por 8. O próximo número divisível por 8 depois do 74 é 80, então o tamanho do nosso padding deve ser 6 (74 + 6 = 80). Assim, nós começamos a contar: 00, 01, 02, 03, 04 e 04 de novo. O último byte do padding é sempre igual ao penúltimo. 
 
