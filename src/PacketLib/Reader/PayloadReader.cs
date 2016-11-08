@@ -26,7 +26,7 @@ namespace GCNet.PacketLib
     /// <summary>
     /// Represents a packet reader for payload data.
     /// </summary>
-    public class PayloadReader : BaseReader
+    public sealed class PayloadReader : ReaderBase
     {
         /// <summary>
         /// Initializes a new instance of PayloadReader using the specified payload data.
@@ -44,15 +44,6 @@ namespace GCNet.PacketLib
             Position = startingPosition;
         }
 
-
-        /// <summary>
-        /// Advances the current position by the specified number of bytes.
-        /// </summary>
-        /// <param name="amount">The amount of bytes to be skipped.</param>
-        public void Skip(int amount)
-        {
-            Position += amount;
-        }
 
         /// <summary>
         /// Reads a byte from the payload data and advances the current position by 1 byte.
@@ -80,7 +71,7 @@ namespace GCNet.PacketLib
         public short ReadInt16()
         {
             short readShort = BigEndian.GetInt16(Data, Position);
-            Skip(sizeof(short));
+            Position += sizeof(short);
 
             return readShort;
         }
@@ -92,7 +83,7 @@ namespace GCNet.PacketLib
         public int ReadInt32()
         {
             int readInt = BigEndian.GetInt32(Data, Position);
-            Skip(sizeof(int));
+            Position += sizeof(int);
 
             return readInt;
         }
@@ -104,7 +95,7 @@ namespace GCNet.PacketLib
         public long ReadInt64()
         {
             long readLong = BigEndian.GetInt64(Data, Position);
-            Skip(sizeof(long));
+            Position += sizeof(long);
 
             return readLong;
         }

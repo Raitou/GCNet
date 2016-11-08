@@ -17,8 +17,6 @@
 //-----------------------------------------------------------------------
 
 using GCNet.CoreLib;
-using GCNet.PacketLib.Compression;
-using GCNet.PacketLib.Writer;
 using GCNet.Util;
 using GCNet.Util.Endianness;
 
@@ -37,66 +35,60 @@ namespace GCNet.PacketLib
 
         /// <summary>
         /// Initializes a new instance of OutPacket for the keys definition packet (ID 0x0001) from the given
-        /// payload data, crypto session, auth session and count.
+        /// payload data, crypto handler, auth handler and count.
         /// </summary>
-        /// <param name="payloadData">The raw payload data.</param>
-        /// <param name="crypto">The crypto session to be used.</param>
-        /// <param name="auth">The auth session to be used.</param>
+        /// <param name="payload">The ready payload data.</param>
+        /// <param name="crypto">The crypto handler to be used.</param>
+        /// <param name="auth">The auth handler to be used.</param>
         /// <param name="firstCount">The first packet count.</param>
-        public OutPacket(byte[] payloadData, CryptoSession crypto, AuthSession auth, int firstCount)
+        public OutPacket(byte[] payload, CryptoHandler crypto, AuthHandler auth, int firstCount)
         {
             HeaderWriter headerWriter = new HeaderWriter();
             headerWriter.WriteData((short)(0));
             headerWriter.WriteData(firstCount);
 
-            Data = AssemblePacket(payloadData, crypto, auth, headerWriter.GetHeader());
+            Data = AssemblePacket(payload, crypto, auth, headerWriter.HeaderData);
         }
 
         /// <summary>
-        /// Initializes a new instance of OutPacket from the given payload data, crypto session, prefix and count.
+        /// Initializes a new instance of OutPacket from the given payload data, crypto handler, auth handler, prefix and count.
         /// </summary>
-        /// <param name="payloadData">The raw payload data.</param>
-        /// <param name="crypto">The crypto session to be used.</param>
-        /// <param name="auth">The auth session to be used.</param>
+        /// <param name="payload">The ready payload data.</param>
+        /// <param name="crypto">The crypto handler to be used.</param>
+        /// <param name="auth">The auth handler to be used.</param>
         /// <param name="prefix">The packet prefix.</param>
         /// <param name="count">The current count of sent packets.</param>
-        public OutPacket(byte[] payloadData, CryptoSession crypto, AuthSession auth, short prefix, int count)
+        public OutPacket(byte[] payload, CryptoHandler crypto, AuthHandler auth, short prefix, int count)
         {
             HeaderWriter headerWriter = new HeaderWriter();
             headerWriter.WriteData(prefix);
             headerWriter.WriteData(count);
 
-            Data = AssemblePacket(payloadData, crypto, auth, headerWriter.GetHeader());
+            Data = AssemblePacket(payload, crypto, auth, headerWriter.HeaderData);
         }
 
 
         /// <summary>
-        /// Assembles the current outgoing packet from the given payload data, crypto session, auth session and partial header.
+        /// Assembles the current outgoing packet from the given payload data, crypto handler, auth handler and partial header.
         /// </summary>
-        /// <param name="payloadData">The raw payload data.</param>
-        /// <param name="crypto">The crypto session being used.</param>
-        /// <param name="auth">The auth session being used.</param>
+        /// <param name="payload">The ready payload data.</param>
+        /// <param name="crypto">The crypto handler being used.</param>
+        /// <param name="auth">The auth handler being used.</param>
         /// <param name="partialHeader">The outer packet header, except for the 2 first bytes (packet size).</param>
         /// <returns>The assembled packet, ready to be sent.</returns>
-        private byte[] AssemblePacket(byte[] payloadData, CryptoSession crypto, AuthSession auth, byte[] partialHeader)
+        private static byte[] AssemblePacket(byte[] payload, CryptoHandler crypto, AuthHandler auth, byte[] partialHeader)
         {
-            PayloadReader reader = new PayloadReader(payloadData, 6);
-            if (reader.ReadBool())
-            {
-                payloadData = PayloadCompression.Compress(payloadData);
-            }
-
-            FixSize(payloadData);
+            FixSize(payload);
 
             byte[] iv = Generate.IV();
-            byte[] encryptedData = crypto.EncryptPacket(payloadData, iv);
+            byte[] encryptedData = crypto.EncryptPacket(payload, iv);
 
             HeaderWriter headerWriter = new HeaderWriter();
             headerWriter.WriteData((short)(16 + encryptedData.Length + 10));
             headerWriter.WriteData(partialHeader);
             headerWriter.WriteData(iv);
 
-            byte[] partialBuffer = Sequence.Concat(headerWriter.GetHeader(), encryptedData);
+            byte[] partialBuffer = Sequence.Concat(headerWriter.HeaderData, encryptedData);
             byte[] hmac = auth.GetHmac(partialBuffer);
 
             return Sequence.Concat(partialBuffer, hmac);
@@ -105,15 +97,15 @@ namespace GCNet.PacketLib
         /// <summary>
         /// Corrects the size contained in the payload data.
         /// </summary>
-        /// <param name="payloadData">The raw payload data.</param>
-        private static void FixSize(byte[] payloadData)
+        /// <param name="payload">The ready payload data.</param>
+        private static void FixSize(byte[] payload)
         {
-            byte[] dataSizeBytes = BigEndian.GetBytes(payloadData.Length - 10);
+            byte[] dataSizeBytes = BigEndian.GetBytes(payload.Length - 7 - 3);
 
-            payloadData[2] = dataSizeBytes[0];
-            payloadData[3] = dataSizeBytes[1];
-            payloadData[4] = dataSizeBytes[2];
-            payloadData[5] = dataSizeBytes[3];
+            payload[2] = dataSizeBytes[0];
+            payload[3] = dataSizeBytes[1];
+            payload[4] = dataSizeBytes[2];
+            payload[5] = dataSizeBytes[3];
         }
     }
 }

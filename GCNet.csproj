@@ -11,6 +11,13 @@
     <AssemblyName>GCNet</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AssemblyInfoFilePath>Properties\AssemblyInfo.cs</AssemblyInfoFilePath>
+    <UpdateAssemblyVersion>True</UpdateAssemblyVersion>
+    <UpdateAssemblyFileVersion>True</UpdateAssemblyFileVersion>
+    <UpdateAssemblyInfoVersion>True</UpdateAssemblyInfoVersion>
+    <AssemblyVersionSettings>None.None.Increment.DateStamp</AssemblyVersionSettings>
+    <AssemblyFileVersionSettings>None.None.Increment.DateStamp</AssemblyFileVersionSettings>
+    <AssemblyInfoVersionSettings>None.None.Increment.DateStamp</AssemblyInfoVersionSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +28,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\GCNet.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +37,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\GCNet.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zlib, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
@@ -45,17 +54,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\CoreLib\Auth\AuthSession.cs" />
+    <Compile Include="src\CoreLib\Auth\AuthHandler.cs" />
     <Compile Include="src\CoreLib\Auth\MD5Hmac.cs" />
     <Compile Include="src\CoreLib\Crypto\DESEncryption.cs" />
-    <Compile Include="src\CoreLib\Crypto\CryptoSession.cs" />
+    <Compile Include="src\CoreLib\Crypto\CryptoHandler.cs" />
     <Compile Include="src\CoreLib\Generate.cs" />
-    <Compile Include="src\PacketLib\Compression\PayloadCompression.cs" />
-    <Compile Include="src\PacketLib\Compression\ZLib.cs" />
+    <Compile Include="src\CoreLib\Compression\CompressionHandler.cs" />
+    <Compile Include="src\CoreLib\Compression\ZLib.cs" />
     <Compile Include="src\PacketLib\InPacket.cs" />
     <Compile Include="src\PacketLib\OutPacket.cs" />
-    <Compile Include="src\PacketLib\Reader\BaseReader.cs" />
-    <Compile Include="src\PacketLib\Writer\BaseWriter.cs" />
+    <Compile Include="src\PacketLib\Reader\ReaderBase.cs" />
+    <Compile Include="src\PacketLib\Writer\WriterBase.cs" />
     <Compile Include="src\PacketLib\Writer\HeaderWriter.cs" />
     <Compile Include="src\PacketLib\Writer\PayloadWriter.cs" />
     <Compile Include="src\PacketLib\Reader\HeaderReader.cs" />

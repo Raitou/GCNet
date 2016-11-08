@@ -16,23 +16,24 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 
+using GCNet.PacketLib.Writer;
 using GCNet.Util.Endianness;
 
-namespace GCNet.PacketLib.Writer
+namespace GCNet.PacketLib
 {
     /// <summary>
     /// Represents a packet writer for header data.
     /// </summary>
-    class HeaderWriter : BaseWriter
+    public sealed class HeaderWriter : WriterBase
     {
         /// <summary>
-        /// Gets the current header data.
+        /// Gets the written header data.
         /// </summary>
-        /// <returns>The current header data.</returns>
-        public byte[] GetHeader()
+        public byte[] HeaderData
         {
-            return Data;
+            get { return Data; }
         }
+
 
         /// <summary>
         /// Writes the specified 16-bit integer to the current header data.

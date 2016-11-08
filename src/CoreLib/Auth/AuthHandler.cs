@@ -22,29 +22,29 @@ using System.Linq;
 namespace GCNet.CoreLib
 {
     /// <summary>
-    /// Represents a packet authentication session.
+    /// Represents a packet authentication handler.
     /// </summary>
-    public class AuthSession
+    public class AuthHandler
     {
         /// <summary>
-        /// Gets the current session's HMAC key.
+        /// Gets the current handler's HMAC key.
         /// </summary>
         public byte[] HmacKey { get; }
 
 
         /// <summary>
-        /// Initializes a new instance of the AuthSession class using the default HMAC key.
+        /// Initializes a new instance of the AuthHandler class using the default HMAC key.
         /// </summary>
-        public AuthSession()
+        public AuthHandler()
         {
             HmacKey = new byte[] { 0xC0, 0xD3, 0xBD, 0xC3, 0xB7, 0xCE, 0xB8, 0xB8 };
         }
 
         /// <summary>
-        /// Initializes a new instance of the AuthSession class using the given HMAC key.
+        /// Initializes a new instance of the AuthHandler class using the given HMAC key.
         /// </summary>
-        /// <param name="hmacKey">The HMAC key which will be used in the auth session.</param>
-        public AuthSession(byte[] hmacKey)
+        /// <param name="hmacKey">The HMAC key which will be used by the auth handler.</param>
+        public AuthHandler(byte[] hmacKey)
         {
             HmacKey = hmacKey;
         }
@@ -54,7 +54,7 @@ namespace GCNet.CoreLib
         /// Computes the HMAC for the specified packet data.
         /// </summary>
         /// <param name="partialBuffer">The whole packet buffer, except for the own HMAC.</param>
-        /// <returns>The HMAC.</returns>
+        /// <returns>The HMAC of the packet, which, in the case of Grand Chase, has the size of 10 bytes.</returns>
         public byte[] GetHmac(byte[] partialBuffer)
         {
             byte[] authData = Sequence.ReadBlock(partialBuffer, 2, partialBuffer.Length - 2);

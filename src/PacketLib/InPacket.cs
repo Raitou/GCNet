@@ -17,8 +17,6 @@
 //-----------------------------------------------------------------------
 
 using GCNet.CoreLib;
-using GCNet.PacketLib.Compression;
-using GCNet.PacketLib.Reader;
 
 namespace GCNet.PacketLib
 {
@@ -28,9 +26,9 @@ namespace GCNet.PacketLib
     public class InPacket
     {
         /// <summary>
-        /// Gets the (decrypted and uncompressed) payload data of the current packet.
+        /// Gets the processed payload data of the current packet.
         /// </summary>
-        public byte[] PayloadData { get; }
+        public byte[] Payload { get; protected set; }
 
         /// <summary>
         /// Gets the size of the current packet.
@@ -48,40 +46,21 @@ namespace GCNet.PacketLib
         /// <summary>
         /// Gets the current packet ID.
         /// </summary>
-        public short Id { get; private set; }
+        public short Id { get; }
 
 
         /// <summary>
-        /// Initializes a new instance of InPacket from the given packet buffer and crypto session.
+        /// Initializes a new instance of InPacket from the given packet buffer and crypto handler.
         /// </summary>
         /// <param name="packetBuffer">The packet buffer the way it was received.</param>
-        /// <param name="crypto">The current crypto session.</param>
-        public InPacket(byte[] packetBuffer, CryptoSession crypto)
+        /// <param name="crypto">The current crypto handler.</param>
+        public InPacket(byte[] packetBuffer, CryptoHandler crypto)
         {
             ParseHeader(packetBuffer);
-            PayloadData = ProcessData(packetBuffer, crypto);
+            Payload = crypto.DecryptPacket(packetBuffer);
             
-            PayloadReader reader = new PayloadReader(PayloadData);
+            PayloadReader reader = new PayloadReader(Payload);
             Id = reader.ReadInt16();
-        }
-
-
-        /// <summary>
-        /// Processes the current packet data and returns the raw packet payload.
-        /// </summary>
-        /// <param name="packetBuffer">The packet buffer the way it was received.</param>
-        /// <param name="crypto">The current crypto session.</param>
-        /// <returns>The packet payload (decrypted and uncompressed).</returns>
-        private static byte[] ProcessData(byte[] packetBuffer, CryptoSession crypto)
-        {
-            byte[] data = crypto.DecryptPacket(packetBuffer);
-
-            PayloadReader reader = new PayloadReader(data, 6);
-            if (reader.ReadBool())
-            {
-                data = PayloadCompression.Decompress(data);
-            }
-            return data;
         }
 
         /// <summary>

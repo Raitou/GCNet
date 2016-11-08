@@ -16,14 +16,15 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 
+using GCNet.PacketLib.Reader;
 using GCNet.Util.Endianness;
 
-namespace GCNet.PacketLib.Reader
+namespace GCNet.PacketLib
 {
     /// <summary>
     /// Represents a packet reader for header data.
     /// </summary>
-    class HeaderReader : BaseReader
+    public sealed class HeaderReader : ReaderBase
     {
         /// <summary>
         /// Initializes a new instance of HeaderReader using the specified data.

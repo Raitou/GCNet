@@ -23,7 +23,7 @@ namespace GCNet.PacketLib.Reader
     /// <summary>
     /// Represents the base class for the packet readers.
     /// </summary>
-    public abstract class BaseReader
+    public abstract class ReaderBase
     {
         /// <summary>
         /// Gets or sets the current reading position.
@@ -39,7 +39,7 @@ namespace GCNet.PacketLib.Reader
         /// The base constructor for the packet readers. Initializes a new instance of a reader using the given data.
         /// </summary>
         /// <param name="data">The packet data to be read.</param>
-        protected BaseReader(byte[] data)
+        protected ReaderBase(byte[] data)
         {
             Data = data;
         }

@@ -16,28 +16,40 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 
-using GCNet.Util;
+using Ionic.Zlib;
+using System.IO;
 
-namespace GCNet.PacketLib.Writer
+namespace GCNet.CoreLib
 {
     /// <summary>
-    /// Represents the base class for the packet writers.
+    /// Handles ZLib compression operations.
     /// </summary>
-    public class BaseWriter
+    internal static class ZLib
     {
         /// <summary>
-        /// Gets or sets the current data being written.
+        /// Compresses the specified block of data.
         /// </summary>
-        protected byte[] Data { get; private set; } = new byte[0];
+        /// <param name="data">The data to be compressed.</param>
+        /// <returns>The compressed data.</returns>
+        public static byte[] CompressData(byte[] data)
+        {
+            MemoryStream ms = new MemoryStream();
 
+            using (ZlibStream compressor = new ZlibStream(ms, CompressionMode.Compress, CompressionLevel.Level1))
+            {
+                compressor.Write(data, 0, data.Length);
+            }
+            return ms.ToArray();
+        }
 
         /// <summary>
-        /// Writes the specified bytes to the current data.
+        /// Decompresses the specified block of data.
         /// </summary>
-        /// <param name="bytes">The bytes to be written.</param>
-        public void WriteData(byte[] bytes)
+        /// <param name="data">The data to be decompressed.</param>
+        /// <returns>The decompressed data.</returns>
+        public static byte[] DecompressData(byte[] data)
         {
-            Data = Sequence.Concat(Data, bytes);
+            return ZlibStream.UncompressBuffer(data);
         }
     }
 }

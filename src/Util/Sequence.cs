@@ -17,13 +17,14 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Linq;
 
 namespace GCNet.Util
 {
     /// <summary>
     /// Provides basic sequences handling functions.
     /// </summary>
-    static class Sequence
+    internal static class Sequence
     {
         /// <summary>
         /// Reads a range of elements from a sequence starting at a specified offset.
@@ -47,13 +48,7 @@ namespace GCNet.Util
         /// <returns>The N sequences concatenated.</returns>
         public static T[] Concat<T>(params T[][] sequences)
         {
-            T[] outputSeq = new T[0];
-
-            for (int i = 0; i < sequences.Length; i++)
-            {
-                outputSeq = Concat(outputSeq, sequences[i]);
-            }
-            return outputSeq;
+            return sequences.Aggregate(Concat);
         }
 
         /// <summary>

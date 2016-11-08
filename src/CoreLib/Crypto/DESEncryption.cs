@@ -23,7 +23,7 @@ namespace GCNet.CoreLib
     /// <summary>
     /// Handles DES encryption operations.
     /// </summary>
-    static class DESEncryption
+    internal static class DESEncryption
     {
         /// <summary>
         /// Gets the cryptography provider used in the Grand Chase's encryption operations.

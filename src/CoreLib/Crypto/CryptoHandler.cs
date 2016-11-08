@@ -22,29 +22,29 @@ using System.Linq;
 namespace GCNet.CoreLib
 {
     /// <summary>
-    /// Represents a packet encryption session.
+    /// Represents a packet encryption handler.
     /// </summary>
-    public class CryptoSession
+    public sealed class CryptoHandler
     {
         /// <summary>
-        /// Gets the current session's encryption key.
+        /// Gets the current handler's encryption key.
         /// </summary>
         public byte[] Key { get; }
 
 
         /// <summary>
-        /// Initializes a new instance of the CryptoSession class using the default encryption key.
+        /// Initializes a new instance of the CryptoHandler class using the default encryption key.
         /// </summary>
-        public CryptoSession()
+        public CryptoHandler()
         {
             Key = new byte[] { 0xC7, 0xD8, 0xC4, 0xBF, 0xB5, 0xE9, 0xC0, 0xFD };
         }
 
         /// <summary>
-        /// Initializes a new instance of the CryptoSession class using the given encryption key.
+        /// Initializes a new instance of the CryptoHandler class using the given encryption key.
         /// </summary>
-        /// <param name="key">The encryption key which will be used in the crypto session.</param>
-        public CryptoSession(byte[] key)
+        /// <param name="key">The encryption key which will be used by the crypto handler.</param>
+        public CryptoHandler(byte[] key)
         {
             Key = key;
         }
@@ -85,18 +85,16 @@ namespace GCNet.CoreLib
         /// <returns>The padded data.</returns>
         private byte[] PadData(byte[] data)
         {
-            // It's a little wrong, I'll soon fix it.
-            
-            int paddingLength = 8 + ((8 - data.Length % 8) % 8);
+            int distance = 8 - (data.Length % 8); // It's the distance from the length value to the next number divisible by the block size (8).
+            int paddingLength = (distance >= 3) ? (distance) : (8 + distance);
+
             byte[] padding = new byte[paddingLength];
 
-            int i = 0;
-            while (i < (paddingLength - 1))
+            for (byte i = 0; i < (paddingLength - 1); i++)
             {
-                padding[i] = (byte)i;
-                i++;
+                padding[i] = i;
             }
-            padding[i] = (byte)(i - 1);
+            padding[paddingLength - 1] = padding[paddingLength - 2]; // Equals the last to the penultimate byte.
 
             return Sequence.Concat(data, padding);
         }

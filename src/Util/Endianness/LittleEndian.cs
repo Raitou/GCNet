@@ -21,7 +21,7 @@ namespace GCNet.Util.Endianness
     /// <summary>
     /// Provides handling functions for little endian data.
     /// </summary>
-    static class LittleEndian
+    internal static class LittleEndian
     {
         /// <summary>
         /// Converts 2 bytes from an array of bytes to a 16-bit integer at a specified index.

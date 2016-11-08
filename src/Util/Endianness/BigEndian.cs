@@ -21,7 +21,7 @@ namespace GCNet.Util.Endianness
     /// <summary>
     /// Provides handling functions for big endian data.
     /// </summary>
-    static class BigEndian
+    internal static class BigEndian
     {
         /// <summary>
         /// Converts 2 bytes from an array of bytes to a 16-bit integer at a specified index.
