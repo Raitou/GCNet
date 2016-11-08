@@ -11,7 +11,7 @@ The encryption process takes an _IV_, a 8-byte _key_ and a _plaintext_.
 Through the CBC mode, the data is processed in blocks of 8 bytes each. But what if the size of our data is not divisible by 8? That's what we will see below.
 
 ### Padding
-> 00 1C 00 00 00 40 00 00 00 00 03 00 00 00 0C 61 00 69 00 2E 00 6B 00 6F 00 6D 00 00 00 00 10 6D 00 61 00 69 00 6E 00 2E 00 65 00 78 00 65 00 00 00 00 14 73 00 63 00 72 00 69 00 70 00 74 00 2E 00 6B 00 6F 00 6D 00 00 00 00 ***00 01 02 03 04 04***
+> ![](http://i.imgur.com/HR4kOAA.png)
 
 The whole thing you see above is the decrypted payload from our packet, but for now, let's limit ourselves only to the part in bold.
 
