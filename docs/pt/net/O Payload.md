@@ -1,10 +1,9 @@
 # **O Payload**
 
 O que você vê abaixo é o payload decriptado do nosso pacote (agora com o padding removido).
-```
-00 1C 00 00 00 40 00 00 00 00 03 00 00 00 0C 61 00 69 00 2E 00 6B 00 6F 00 6D 00 00 00 00 10 6D 00 61 00 69 00 
-6E 00 2E 00 65 00 78 00 65 00 00 00 00 14 73 00 63 00 72 00 69 00 70 00 74 00 2E 00 6B 00 6F 00 6D 00 00 00 00
-```
+
+> ![](http://i.imgur.com/nQlqmtm.png)
+
 Como dito anteriormente, ele é o portador das informações mais importantes em todo o packet.
 
 Assim como o buffer do pacote, o payload decriptado tem seus próprios segmentos: o _header_, o _conteúdo_ e um _preenchimento de bytes nulos_. Novamente vamos explicá-los um a um.
@@ -13,26 +12,26 @@ Assim como o buffer do pacote, o payload decriptado tem seus próprios segmentos
 > Nota II: diferentemente do **header do pacote**, todos os dados no **payload** são escritos no formato [big-endian](https://pt.wikipedia.org/wiki/Extremidade_(ordena%C3%A7%C3%A3o)).
 
 ## Header
-> 00 1C 00 00 00 40 00
+> ![](http://i.imgur.com/C19kDWK.png)
 
 O header do payload contém três informações essenciais: _ID_ do pacote, _tamanho do conteúdo_ e _indicador de compressão_. A seguir, nós daremos uma olhada mais de perto nesses valores.
 
 ### ID
-> ***00 1C*** 00 00 00 40 00
+> ![](http://i.imgur.com/JJfLbND.png)
 
 O ID, como o nome sugere, é o identificador do pacote. Ele indica qual o propósito do packet, o que ele é.
 
 Por exemplo, o pacote de ID 0x0001 é o pacote em que as chaves da sessão são definidas; o de ID 0x001C (que é o nosso caso) é o pacote de reconhecimento SHA_FILENAME_LIST, que serve para informar o cliente sobre os arquivos que serão verificados através de SHA checksum.
 
 ### Tamanho do Conteúdo
-> 00 1C ***00 00 00 40*** 00
+> ![](http://i.imgur.com/pTkORlB.png)
 
 Esse é o tamanho em bytes do _conteúdo_ do payload. 
 
 No nosso caso, ele é _00 00 00 40_ em valores hexadecimais, denotando que o tamanho é _64_ em decimal. Veja por si mesmo: conte cada byte do 1º após o header ao 4º último. Sua contagem deverá alcançar 64.
 
 ### Indicador de Compressão (_Compression Flag_)
-> 00 1C 00 00 00 40 ***00***
+> ![](http://i.imgur.com/OZSqBEU.png)
 
 O indicador de compressão é um valor booleano que indica se o conteúdo está comprimido ou não. 
 
@@ -41,7 +40,7 @@ Quando o indicador é _verdadeiro_ (**01**), significa que os dados do conteúdo
 A compressão em si será discutida em breve.
 
 ## Conteúdo
-> ![](http://image.prntscr.com/image/ec3c97561f4a427693a1a08e90f4ef5e.png)
+> ![](http://i.imgur.com/EbaO45Q.png)
 
 Basicamente, o conteúdo é a mensagem em sua forma mais pura. Na verdade, é a informação que o packet realmente deve transmitir.
 
@@ -53,7 +52,7 @@ A porção marcada em roxo é uma _string_ [unicode](https://pt.wikipedia.org/wi
 
 Mas lembre-se: podem haver valores que não são precedidos por seu tamanho!
 ## Preenchimento de Bytes Nulos (_Null Bytes Padding_)
-> 00 00 00
+> ![](http://i.imgur.com/XKdghFa.png)
 
 É apenas um preenchimento composto por três bytes _00_ (nulos) ao fim de cada payload. 
 
