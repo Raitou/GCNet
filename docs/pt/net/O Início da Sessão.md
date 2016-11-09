@@ -8,11 +8,9 @@ Seus dados se pareceriam com estes:
 
 > Nota: o packet aqui exposto é da season eternal. Eu não verifiquei os das outras seasons, mas eles podem ser diferentes.
 
-```
-52 00 00 00 31 18 00 00 59 59 59 59 59 59 59 59 91 98 7C 57 C3 D1 13 CE 9C 97 AC 0C 31 B0 79 78 DC AF 50 F4 F1 B0
-61 9F 95 E3 0F DE 22 32 19 6A 86 FA B6 28 12 F4 1A E8 BC 40 02 84 0E 19 BF C6 46 26 3E 96 FA 52 6B 64 A2 3C 82 90
-2C 9E 32 BB DA 8D
-```
+--
+> ![](http://i.imgur.com/59AYGlf.png)
+
 Primeiro, vamos falar sobre duas coisas: o _prefixo_ e a _contagem_
 
 * **Prefixo**: no "primeiro packet", o prefixo não é aleatório. Ao invés disso, é sempre _00 00_;
@@ -28,7 +26,7 @@ Para esse packet, o Grand Chase usa duas chaves padrões que são armazenadas po
 * **Chave de Autenticação Padrão:** C0 D3 BD C3 B7 CE B8 B8
 
 Tendo isso explicado, analisemos agora o payload do pacote.
-> ![](http://i.imgur.com/nISFz3e.png?1)
+> ![](http://i.imgur.com/VNtTgXR.png)
 
 Ele é como o de qualquer outro: tem um header, um conteúdo, e um preenchimento de bytes nulos ao final.
 
