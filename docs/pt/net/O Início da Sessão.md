@@ -14,9 +14,7 @@ Seus dados se pareceriam com estes:
 Primeiro, vamos falar sobre duas coisas: o _prefixo_ e a _contagem_
 
 * **Prefixo**: no "primeiro packet", o prefixo não é aleatório. Ao invés disso, é sempre _00 00_;
-* **Contagem**: no "primeiro packet", (obviamente) a contagem não mede a quantidade de pacotes enviados;
-
-> Nota: eu ainda tenho minhas dúvidas sobre o que a contagem represente nesse packet. Ela não parece ser um valor aleatório. O que eu sei é que se ela for _00 00 00 00_, o cliente não o reconhece. É apenas uma questão de tempo até eu ter uma ideia mais clara sobre isso, eu só preciso analisar mais algumas amostras desse tipo de packet.
+* **Contagem**: no "primeiro packet", (obviamente) a contagem não mede a quantidade de pacotes enviados. Nesse caso, a contagem é a de sessões iniciadas em um servidor, ou seja, o número de conexões já realizadas;
 
 Você pode estar pensando: "Se as chaves da sessão estão dentro do payload encriptado, quais chaves foram usadas para criptografar os dados e gerar o HMAC desse pacote?"
 
