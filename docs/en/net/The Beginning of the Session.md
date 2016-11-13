@@ -14,9 +14,7 @@ Its data would look like this one:
 First, let's talk about two things: the _prefix_ and the _count_.
 
 * **Prefix**: in the "first packet", the prefix isn't random. Instead, it's always _00 00_;
-* **Count**: in the "first packet", (obviously) the count does not measure the quantity of the packets sent;
-
-> Note: _I still have my doubts about what the count represents in the first packet. It doesn't seem to be a random value. What I know at moment is that if it is 00 00 00 00, the client does not acknowledge the packet. It just a matter of time until I get a clearer idea about this, I just need to analyze some more samples of this type of packet._
+* **Count**: in the "first packet", (obviously) the count does not measure the quantity of the packets sent. In this case, it's the count of initialized sessions, that is, the amount of connections already performed;
 
 You may be wondering: "If the session keys are inside the encrypted data, what keys were used to encrypt the packet and generate the auth code of this packet?"
 
