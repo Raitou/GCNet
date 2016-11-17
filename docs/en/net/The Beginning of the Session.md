@@ -34,6 +34,6 @@ The highlighted values are respectively the _prefix_ to be used in the following
 * **The part in purple is the authentication key**: 62 88 F3 A7 D3 2C 87 C5
 * **The part in red is the encryption key**: A4 29 1C 74 B2 CE 4A 34
 
-If we go back to the packet that we have seen at the beginning of the tutorial, we will notice that [its prefix](./The%20Overall%20Structure.md#prefix) corresponds to that defined in the "first packet". The detail is that the prefix is in the little-endian format in the header while it's big-endian in the "first packet's" content.
+If we go back to the packet that we have seen at the beginning of the tutorial, we will notice that [its prefix](./The%20Overall%20Structure.md#prefix) (_E7 8E_) corresponds to that defined in the "first packet" (_8E E7_). The detail is that the prefix is in the little-endian format in the header while it's big-endian in the "first packet's" content.
 
 And for now, that's all :smile:
