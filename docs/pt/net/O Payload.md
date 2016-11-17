@@ -9,7 +9,7 @@ Como dito anteriormente, ele é o portador das informações mais importantes em
 Assim como o buffer do pacote, o payload decriptado tem seus próprios segmentos: o _header_, o _conteúdo_ e um _preenchimento de bytes nulos_. Novamente vamos explicá-los um a um.
 > Nota I: há algumas exceções para essa divisão, como, por exemplo, o packet de _ping_, que só possui bytes nulos _00_. 
 
-> Nota II: diferentemente do **header do pacote**, todos os dados no **payload** são escritos no formato [big-endian](https://pt.wikipedia.org/wiki/Extremidade_(ordena%C3%A7%C3%A3o)).
+> Nota II: diferentemente do **header do pacote**, os dados no **payload** são escritos no formato [big-endian](https://pt.wikipedia.org/wiki/Extremidade_(ordena%C3%A7%C3%A3o)).
 
 ## Header
 > ![](http://i.imgur.com/C19kDWK.png)
@@ -63,11 +63,13 @@ Alguns dos pacotes do Grand Chase tem o conteúdo de seu payload comprimido.
 Para comprimir dados, o Grand Chase usa a [zlib](https://pt.wikipedia.org/wiki/Zlib). Podemos dizer isso por conta da presença de um dos headers da zlib (_78 01_) em todos os payloads comprimidos.
 
 Vamos dar uma olhada em um.
-> ![](http://image.prntscr.com/image/09858f6f18bb4cc9b597f7e884ae9576.png)
+> ![](http://i.imgur.com/u51tXBH.png)
 
 (Como você pode ver nos bytes em vermelho, o indicador de compressão é _verdadeiro_ e o header da zlib está presente)
 
-Na verdade, apenas a parte destacada é comprimida: o header e mais 4 bytes permanecem normais, bem como o preenchimento _00 00 00_ no final.
+Na verdade, apenas a parte destacada em roxo é comprimida: o header e os 4 primeiros bytes do conteúdo permanecem normais, bem como o preenchimento _00 00 00_ no final. 
+
+Esses 4 bytes do conteúdo dos payloads comprimidos (no nosso caso, marcados de verde) são um número inteiro que representa o **tamanho da parte comprimida depois de descomprimida**. Note que, excepcionalmente, esse segundo tamanho é little-endian, sendo _764_ em decimal.
 
 Depois que os dados são descomprimidos, o payload pode ser lido normalmente como qualquer um não comprimido.
 

@@ -63,11 +63,13 @@ Some of the Grand Chase's packets have their payload content compressed.
 To compress the data, Grand Chase uses [zlib](https://en.wikipedia.org/wiki/Zlib). We can know this because of the presence of one of the zlib headers (_78 01_) in every payload which have its data compressed.
 
 Let's take a look at one compressed payload.
-> ![](http://image.prntscr.com/image/09858f6f18bb4cc9b597f7e884ae9576.png)
+> ![](http://i.imgur.com/u51tXBH.png)
 
 (As you can see in the bytes in red, the compression flag is _true_ and the zlib header is present)
 
-Actually, only the highlighted portion is compressed: the header plus 4 bytes remains uncompressed, as well as the _00 00 00_ padding at the end.
+Actually, only the portion highlighted with purple is compressed: the header and the first 4 bytes of the content remains uncompressed, as well as the _00 00 00_ padding at the end.
+
+These 4 bytes from the content of the compressed payloads (in our case, marked in green) are an integer which represents the **size of the compressed portion after decompressed**. Note that, exceptionally, this second size is little-endian, being _764_ in decimal.
 
 After the data is decompressed, the payload can be read normally like any uncompressed other.
 
