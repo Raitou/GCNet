@@ -63,11 +63,13 @@ Alguns dos pacotes do Grand Chase tem o conteúdo de seu payload comprimido.
 Para comprimir dados, o Grand Chase usa a [zlib](https://pt.wikipedia.org/wiki/Zlib). Podemos dizer isso por conta da presença de um dos headers da zlib (_78 01_) em todos os payloads comprimidos.
 
 Vamos dar uma olhada em um.
-> ![](http://image.prntscr.com/image/09858f6f18bb4cc9b597f7e884ae9576.png)
+> ![](http://i.imgur.com/u51tXBH.png)
 
 (Como você pode ver nos bytes em vermelho, o indicador de compressão é _verdadeiro_ e o header da zlib está presente)
 
-Na verdade, apenas a parte destacada é comprimida: o header e mais 4 bytes permanecem normais, bem como o preenchimento _00 00 00_ no final.
+Na verdade, apenas a parte destacada é comprimida: o header mais os bytes marcados em verde permanecem normais, bem como o preenchimento _00 00 00_ no final. 
+
+Esses 4 bytes marcados de verde que ocorrem nos payloads comprimidos são o tamanho **descomprimido** da parte comprimida, no nosso caso, marcada de roxo. Note que esse segundo tamanho está em little-endian, havendo aí uma exceção dentro de nosso payload.
 
 Depois que os dados são descomprimidos, o payload pode ser lido normalmente como qualquer um não comprimido.
 
