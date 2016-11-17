@@ -26,7 +26,7 @@ O valor está no formato little-endian. Então, ele é, na verdade, _00 6A_, que
 
 Agora, deparamo-nos com o prefixo.
 
-Ele é representado por 2 bytes aleatórios gerados no início da sessão. A exceção é o pacote de definição das chaves, em que o prefixo é sempre _00 00_. Afinal, é esse o pacote que contém o novo prefixo gerado a ser usado no restante dos pacotes.
+Ele é representado por 2 bytes aleatórios gerados no início da sessão. A exceção é o pacote de definição das chaves, em que o prefixo é sempre _00 00_, afinal, é esse o pacote que contém o novo prefixo gerado a ser usado no restante dos pacotes.
 
 Note que o prefixo gerado para os pacotes do servidor não é o mesmo usado nos pacotes enviados pelo cliente.
 
