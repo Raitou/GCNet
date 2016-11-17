@@ -34,7 +34,7 @@ Os valores destacados são, respectivamente, o _prefixo_ a ser utilizado nos pac
 * **A parte em roxo é a chave de autenticação**: 62 88 F3 A7 D3 2C 87 C5
 * **A parte em vermelho é a chave de criptografia**: A4 29 1C 74 B2 CE 4A 34
 
-Se voltarmos ao pacote que observamos no início do tutorial, podemos ver que [seu prefixo](./A%20Estrutura%20Geral.md#prefixo) corresponde ao definido no "pacote inicial". O detalhe é que o prefixo está em little-endian no header, enquanto no conteúdo do "pacote inicial" ele está em big-endian.
+Se voltarmos ao pacote que observamos no início do tutorial, podemos ver que [seu prefixo](./A%20Estrutura%20Geral.md#prefixo) (_E7 8E_) corresponde ao definido no "pacote inicial" (_8E E7_). O detalhe é que o prefixo está em little-endian no header, enquanto no conteúdo do "pacote inicial" ele está em big-endian.
 
 
 E, por enquanto, isso é tudo :smile:
