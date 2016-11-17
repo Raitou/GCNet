@@ -26,7 +26,7 @@ It is in the little-endian format, so it's actually _00 6A_, which is _106_ in d
 
 We're now faced with the *prefix*. 
 
-It's represented by 2 random bytes generated at the beginning of the session. The exception is the packet in which the session keys are defined, where the prefix is always _00 00_, after all, it's inside it that is the new generated prefix.
+It's represented by 2 random bytes generated at the beginning of the session. The exception is the packet in which the session keys are defined, where the prefix is always _00 00_, after all, it's inside it that is the new generated prefix (this packet will be explained in detail later).
 
 Note that the generated prefix for the server's packets isn't the same as that used in the packets sent by the client.
 
