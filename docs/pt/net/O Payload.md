@@ -67,9 +67,9 @@ Vamos dar uma olhada em um.
 
 (Como você pode ver nos bytes em vermelho, o indicador de compressão é _verdadeiro_ e o header da zlib está presente)
 
-Na verdade, apenas a parte destacada é comprimida: o header mais os bytes marcados em verde permanecem normais, bem como o preenchimento _00 00 00_ no final. 
+Na verdade, apenas a parte destacada em roxo é comprimida: o header e os 4 primeiros bytes do conteúdo permanecem normais, bem como o preenchimento _00 00 00_ no final. 
 
-Esses 4 bytes marcados de verde que ocorrem nos payloads comprimidos são o tamanho **descomprimido** da parte comprimida, no nosso caso, marcada de roxo. Note que esse segundo tamanho está em little-endian, havendo aí uma exceção dentro de nosso payload.
+Esses 4 bytes do conteúdo dos payloads comprimidos (no nosso caso, marcados de verde) são o tamanho **descomprimido** da parte comprimida. Note que esse segundo tamanho está em little-endian, havendo aí uma exceção dentro de nosso payload.
 
 Depois que os dados são descomprimidos, o payload pode ser lido normalmente como qualquer um não comprimido.
 
