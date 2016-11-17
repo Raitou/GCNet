@@ -9,7 +9,7 @@ Como dito anteriormente, ele é o portador das informações mais importantes em
 Assim como o buffer do pacote, o payload decriptado tem seus próprios segmentos: o _header_, o _conteúdo_ e um _preenchimento de bytes nulos_. Novamente vamos explicá-los um a um.
 > Nota I: há algumas exceções para essa divisão, como, por exemplo, o packet de _ping_, que só possui bytes nulos _00_. 
 
-> Nota II: diferentemente do **header do pacote**, todos os dados no **payload** são escritos no formato [big-endian](https://pt.wikipedia.org/wiki/Extremidade_(ordena%C3%A7%C3%A3o)).
+> Nota II: diferentemente do **header do pacote**, os dados no **payload** são escritos no formato [big-endian](https://pt.wikipedia.org/wiki/Extremidade_(ordena%C3%A7%C3%A3o)).
 
 ## Header
 > ![](http://i.imgur.com/C19kDWK.png)
