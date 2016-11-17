@@ -26,7 +26,7 @@ O valor está no formato little-endian. Então, ele é, na verdade, _00 6A_, que
 
 Agora, deparamo-nos com o prefixo. 
 
-Esses dois bytes estão presentes em todos os packets e contém um valor aleatório que é gerado no início da sessão e usado em todos os pacotes seguintes. Há apenas uma exceção: o pacote de definição das chaves da sessão, no qual o prefixo é representado por _00 00_ (esse pacote será discutido individualmente mais tarde).
+Esses dois bytes estão presentes em todos os packets e contém um valor aleatório que é gerado no início da sessão e usado em todos os pacotes seguintes. Há apenas uma exceção: o pacote de definição das chaves da sessão, no qual o prefixo é representado por _00 00_. Afinal, é nele que está contido o valor do prefixo a ser usado no restante dos pacotes. (esse pacote será discutido individualmente mais tarde).
 
 ### Contagem
 > ![](http://i.imgur.com/B9v5VDh.png)
