@@ -17,6 +17,7 @@
 //-----------------------------------------------------------------------
 
 using GCNet.Util;
+using GCNet.Util.Endianness;
 
 namespace GCNet.CoreLib
 {
@@ -58,16 +59,17 @@ namespace GCNet.CoreLib
         /// <summary>
         /// Gets the the compressed payload data of the current handler.
         /// </summary>
-        /// <returns>The compressed payload data.</returns>
+        /// <returns>The compressed payload data including the uncompressed data size in the first bytes of the content.</returns>
         public byte[] GetCompressedPayload()
         {
-            byte[] firstPart = Sequence.ReadBlock(PayloadData, 0, 11);
+            byte[] payloadHeader = Sequence.ReadBlock(PayloadData, 0, 7);
             byte[] uncompressedData = Sequence.ReadBlock(PayloadData, 11, PayloadData.Length - 11 - 3);
+            byte[] uncompressedSize = LittleEndian.GetBytes(uncompressedData.Length);
             byte[] nullBytesPadding = new byte[3];
 
             byte[] compressedData = ZLib.CompressData(uncompressedData);
             
-            return Sequence.Concat(firstPart, compressedData, nullBytesPadding);
+            return Sequence.Concat(payloadHeader, uncompressedSize, compressedData, nullBytesPadding);
         }
 
         /// <summary>
@@ -83,6 +85,6 @@ namespace GCNet.CoreLib
             byte[] decompressedData = ZLib.DecompressData(compressedData);
 
             return Sequence.Concat(firstPart, decompressedData, nullBytesPadding);
-        }        
+        }  
     }
 }
