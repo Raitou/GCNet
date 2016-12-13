@@ -53,24 +53,23 @@ namespace GCNet.CoreLib
         /// <summary>
         /// Computes the HMAC for the specified packet data.
         /// </summary>
-        /// <param name="partialBuffer">The whole packet buffer, except for the own HMAC.</param>
+        /// <param name="authData">The whole packet buffer, except for the size and the own HMAC.</param>
         /// <returns>The HMAC of the packet, which, in the case of Grand Chase, has the size of 10 bytes.</returns>
-        public byte[] GetHmac(byte[] partialBuffer)
+        public byte[] GetHmac(byte[] authData)
         {
-            byte[] authData = Sequence.ReadBlock(partialBuffer, 2, partialBuffer.Length - 2);
             return MD5Hmac.ComputeHmac(authData, HmacKey, 10);
         }
 
         /// <summary>
         /// Checks the validity of the stored HMAC in the packet buffer.
         /// </summary>
-        /// <param name="packetBuffer">The packet buffer the way it was received.</param>
+        /// <param name="packetData">The packet the way it was received.</param>
         /// <returns>A boolean that indicates if the stored HMAC is whether or not valid.</returns>
-        public bool VerifyHmac(byte[] packetBuffer)
+        public bool VerifyHmac(byte[] packetData)
         {
-            byte[] storedHmac = Sequence.ReadBlock(packetBuffer, packetBuffer.Length - 10, 10);
+            byte[] storedHmac = Sequence.ReadBlock(packetData, packetData.Length - 10, 10);
 
-            byte[] authData = Sequence.ReadBlock(packetBuffer, 2, packetBuffer.Length - 10 - 2);
+            byte[] authData = Sequence.ReadBlock(packetData, 2, packetData.Length - 10 - 2);
             byte[] expectedHmac = MD5Hmac.ComputeHmac(authData, HmacKey, 10);
 
             return storedHmac.SequenceEqual(expectedHmac);

@@ -16,7 +16,8 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 //-----------------------------------------------------------------------
 
-using GCNet.PacketLib.Writer;
+using GCNet.CoreLib;
+using GCNet.Util;
 using GCNet.Util.Endianness;
 using System;
 using System.Text;
@@ -26,19 +27,47 @@ namespace GCNet.PacketLib
     /// <summary>
     /// Represents a packet writer for payload data.
     /// </summary>
-    public sealed class PayloadWriter : WriterBase
+    public sealed class PayloadWriter
     {
         /// <summary>
-        /// Gets the written payload data.
+        /// Gets or sets the current content's data.
         /// </summary>
-        public byte[] PayloadData
-        {
-            get { return Data; }
-        }
+        private byte[] Data { get; set; } = new byte[0];
 
 
         /// <summary>
-        /// Writes the specified byte to the current payload data.
+        /// Builds a payload from the current content's data.
+        /// </summary>
+        /// <param name="id">The packet's id.</param>
+        /// <returns>A new payload.</returns>
+        public byte[] GetPayload(short id)
+        {
+            byte[] packetId = BigEndian.GetBytes(id);
+            byte[] size = BigEndian.GetBytes(Data.Length);
+            byte[] compressionFlag = { 0 }; // false
+
+            return Sequence.Concat(packetId, size, compressionFlag, Data);
+        }
+
+        /// <summary>
+        /// Builds a compressed payload from the current content's data.
+        /// </summary>
+        /// <param name="id">The packet's id.</param>
+        /// <returns>A new compressed payload.</returns>
+        public byte[] GetCompressedPayload(short id)
+        {
+            byte[] compressedData = ZLib.CompressData(Data);
+
+            byte[] packetId = BigEndian.GetBytes(id);
+            byte[] size = BigEndian.GetBytes(compressedData.Length + 4);
+            byte[] compressionFlag = { 1 }; // true
+            byte[] decompressedSize = LittleEndian.GetBytes(Data.Length);
+
+            return Sequence.Concat(packetId, size, compressionFlag, decompressedSize, compressedData);
+        }
+
+        /// <summary>
+        /// Writes the specified byte to the current payload's content.
         /// </summary>
         /// <param name="value">The byte to be written.</param>
         public void WriteData(byte value)
@@ -47,7 +76,7 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
-        /// Writes the specified boolean to the current payload data.
+        /// Writes the specified boolean to the current payload's content.
         /// </summary>
         /// <param name="boolean">The boolean to be written.</param>
         public void WriteData(bool boolean)
@@ -56,7 +85,7 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
-        /// Writes the specified 16-bit integer to the current payload data.
+        /// Writes the specified 16-bit integer to the current payload's content.
         /// </summary>
         /// <param name="int16">The 16-bit integer to be written.</param>
         public void WriteData(short int16)
@@ -65,7 +94,7 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
-        /// Writes the specified 32-bit integer to the current payload data.
+        /// Writes the specified 32-bit integer to the current payload's content.
         /// </summary>
         /// <param name="int32">The 32-bit integer to be written.</param>
         public void WriteData(int int32)
@@ -74,7 +103,7 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
-        /// Writes the specified 64-bit integer to the current payload data.
+        /// Writes the specified 64-bit integer to the current payload's content.
         /// </summary>
         /// <param name="int64">The 64-bit integer to be written.</param>
         public void WriteData(long int64)
@@ -83,7 +112,7 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
-        /// Writes the specified string to the current payload data.
+        /// Writes the specified string to the current payload's content.
         /// </summary>
         /// <param name="str">The string to be written.</param>
         public void WriteData(string str)
@@ -92,12 +121,21 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
-        /// Writes the specified unicode string to the current payload data.
+        /// Writes the specified unicode string to the current payload's content.
         /// </summary>
         /// <param name="ustr">The unicode string to be written.</param>
         public void WriteUnicodeString(string ustr)
         {
             WriteData(Encoding.Unicode.GetBytes(ustr));
+        }
+
+        /// <summary>
+        /// Writes the specified bytes to the current content's data.
+        /// </summary>
+        /// <param name="bytes">The bytes to be written.</param>
+        public void WriteData(byte[] bytes)
+        {
+            Data = Sequence.Concat(Data, bytes);
         }
     }
 }

@@ -17,36 +17,60 @@
 //-----------------------------------------------------------------------
 
 using GCNet.CoreLib;
+using GCNet.Util;
+using GCNet.Util.Endianness;
 
 namespace GCNet.PacketLib
 {
     /// <summary>
     /// Represents an incoming packet.
     /// </summary>
-    public class InPacket
+    public sealed class InPacket
     {
-        /// <summary>
-        /// Gets the processed payload data of the current packet.
-        /// </summary>
-        public byte[] Payload { get; protected set; }
-
         /// <summary>
         /// Gets the size of the current packet.
         /// </summary>
-        public short Size { get; private set; }
+        public short Size
+        {
+            get { return LittleEndian.GetInt16(PacketData, 0); }
+        }
         /// <summary>
         /// Gets the prefix of the current packet.
         /// </summary>
-        public short Prefix { get; private set; }
+        public short Prefix
+        {
+            get { return LittleEndian.GetInt16(PacketData, 2); }
+        }
         /// <summary>
-        /// Gets the count in the current packet header.
+        /// Gets the count in the current packet's header.
         /// </summary>
-        public int Count { get; private set; }
+        public int Count
+        {
+            get { return LittleEndian.GetInt32(PacketData, 4); }
+        }
+        /// <summary>
+        /// Gets the IV of the current packet.
+        /// </summary>
+        public byte[] IV
+        {
+            get { return Sequence.ReadBlock(PacketData, 8, 8); }
+        }
+        /// <summary>
+        /// Gets the current packet's decrypted payload.
+        /// </summary>
+        public byte[] Payload
+        {
+            get { return CryptoHandler.DecryptPacket(PacketData); }
+        }
 
         /// <summary>
-        /// Gets the current packet ID.
+        /// Gets the current packet's data.
         /// </summary>
-        public short Id { get; }
+        private byte[] PacketData { get; }
+        /// <summary>
+        /// Gets the current packet's crypto handler.
+        /// </summary>
+        private CryptoHandler CryptoHandler { get; }
 
 
         /// <summary>
@@ -56,24 +80,8 @@ namespace GCNet.PacketLib
         /// <param name="crypto">The current crypto handler.</param>
         public InPacket(byte[] packetBuffer, CryptoHandler crypto)
         {
-            ParseHeader(packetBuffer);
-            Payload = crypto.DecryptPacket(packetBuffer);
-            
-            PayloadReader reader = new PayloadReader(Payload);
-            Id = reader.ReadInt16();
-        }
-
-        /// <summary>
-        /// Parses the header of the current packet and assigns the read values to the proper variables.
-        /// </summary>
-        /// <param name="packetBuffer">The packet buffer the way it was received.</param>
-        private void ParseHeader(byte[] packetBuffer)
-        {
-            HeaderReader reader = new HeaderReader(packetBuffer);
-
-            Size = reader.ReadInt16();
-            Prefix = reader.ReadInt16();
-            Count = reader.ReadInt32();
+            PacketData = packetBuffer;
+            CryptoHandler = crypto;
         }
     }
 }

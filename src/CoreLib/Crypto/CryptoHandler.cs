@@ -65,12 +65,12 @@ namespace GCNet.CoreLib
         /// <summary>
         /// Decrypts the specified packet buffer.
         /// </summary>
-        /// <param name="packetBuffer">The packet buffer the way it was received.</param>
+        /// <param name="packetData">The packet the way it was received.</param>
         /// <returns>The decrypted packet data.</returns>
-        public byte[] DecryptPacket(byte[] packetBuffer)
+        public byte[] DecryptPacket(byte[] packetData)
         {
-            byte[] iv = Sequence.ReadBlock(packetBuffer, 8, 8);
-            byte[] encryptedData = Sequence.ReadBlock(packetBuffer, 16, packetBuffer.Length - 10 - 16);
+            byte[] iv = Sequence.ReadBlock(packetData, 8, 8);
+            byte[] encryptedData = Sequence.ReadBlock(packetData, 16, packetData.Length - 10 - 16);
 
             byte[] decryptedData = DESEncryption.DecryptData(encryptedData, iv, Key);
             int paddingLength = (decryptedData.Last() + 2);
