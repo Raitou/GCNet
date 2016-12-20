@@ -74,7 +74,7 @@ namespace GCNet.PacketLib
             if (CompressionFlag)
             {
                 byte[] firstPart = Sequence.ReadBlock(Data, 0, 11);
-                byte[] decompressedContent = ZLib.DecompressData(Sequence.ReadBlock(Data, 11, Size));
+                byte[] decompressedContent = ZLib.DecompressData(Sequence.ReadBlock(Data, 11, Size - 4));
                 byte[] nullBytesPadding = new byte[3];
 
                 payload = Sequence.Concat(firstPart, decompressedContent, nullBytesPadding);
@@ -163,7 +163,9 @@ namespace GCNet.PacketLib
         /// <returns>The read bytes.</returns>
         public byte[] ReadBytes(int count)
         {
-            return Sequence.ReadBlock(Data, Position += count, count);
+	    byte[] data = Sequence.ReadBlock(Data, Position, count);
+            Position += count;
+	    return data;
         }
     }
 }
