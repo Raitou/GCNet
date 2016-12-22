@@ -45,8 +45,9 @@ namespace GCNet.PacketLib
             byte[] packetId = BigEndian.GetBytes(id);
             byte[] size = BigEndian.GetBytes(Data.Length);
             byte[] compressionFlag = { 0 }; // false
+            byte[] padding = { 0, 0, 0 };
 
-            return Sequence.Concat(packetId, size, compressionFlag, Data);
+            return Sequence.Concat(packetId, size, compressionFlag, Data, padding);
         }
 
         /// <summary>
@@ -62,8 +63,9 @@ namespace GCNet.PacketLib
             byte[] size = BigEndian.GetBytes(compressedData.Length + 4);
             byte[] compressionFlag = { 1 }; // true
             byte[] decompressedSize = LittleEndian.GetBytes(Data.Length);
+            byte[] padding = { 0, 0, 0 };
 
-            return Sequence.Concat(packetId, size, compressionFlag, decompressedSize, compressedData);
+            return Sequence.Concat(packetId, size, compressionFlag, decompressedSize, compressedData, padding);
         }
 
         /// <summary>

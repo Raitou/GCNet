@@ -19,6 +19,7 @@
 using GCNet.CoreLib;
 using GCNet.Util;
 using GCNet.Util.Endianness;
+using System;
 
 namespace GCNet.PacketLib
 {
@@ -48,7 +49,7 @@ namespace GCNet.PacketLib
             byte[] iv = Generate.IV();
             byte[] encryptedData = crypto.EncryptPacket(payload, iv);
 
-            byte[] size = LittleEndian.GetBytes(16 + encryptedData.Length + 10);
+            byte[] size = LittleEndian.GetBytes(Convert.ToInt16(16 + encryptedData.Length + 10));
 
             byte[] authData = Sequence.Concat(packetPrefix, packetCount, iv, encryptedData);
             byte[] hmac = auth.GetHmac(authData);
