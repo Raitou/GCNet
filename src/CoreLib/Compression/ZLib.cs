@@ -24,7 +24,7 @@ namespace GCNet.CoreLib
     /// <summary>
     /// Handles ZLib compression operations.
     /// </summary>
-    internal static class ZLib
+    public static class ZLib
     {
         /// <summary>
         /// Compresses the specified block of data.
