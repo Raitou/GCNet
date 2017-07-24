@@ -11,7 +11,7 @@ Now let's analyze its parts:
 ## Header
 > ![](http://i.imgur.com/mNqvlYx.png)
 
-In all packets, it represents the first 16 bytes of the received buffer. It contains some basic informations about the packet, which will be explained in detail below.
+In all packets, it represents the first 16 bytes of the received buffer. It contains some basic information about the packet, which will be explained in detail below.
 > Note: all the data in the header is written in the [little-endian](https://en.wikipedia.org/wiki/Endianness#Little-endian) format.
 
 ### Size
@@ -26,18 +26,18 @@ It is in the little-endian format, so it's actually _00 6A_, which is _106_ in d
 
 We're now faced with the *prefix*. 
 
-It's represented by 2 random bytes generated at the beginning of the session. The exception is the packet in which the session keys are defined, where the prefix is always _00 00_, after all, it's inside it that is the new generated prefix (this packet will be explained in detail later).
+It consists of 2 random bytes generated at the beginning of the session. The exception is the packet in which the session keys are defined, for which the prefix is always _00 00_. After all, it's inside this packet that is the new generated prefix (this packet will be explained in detail later).
 
-Note that the generated prefix for the server's packets isn't the same as that used in the packets sent by the client.
+Note that the generated prefix for the server packets isn't the same as that used in the packets sent by the client.
 
 ### Count
 > ![](http://i.imgur.com/B9v5VDh.png)
 
 It's a 4-byte integer that represents the count of sent packets within a session. Note that both client and server have their own counts, that is, the client counts the packets sent by the client and the server counts the packets sent by the server.
 
-In our case, the packet count is 2 since it's _00 00 00 02_ in hex with usual endianness.
+In our case, the packet count is 2 since it's _00 00 00 02_ in hex in the usual endianness.
 
-Like the prefix, the count has as exception the same packet (as pointed before, this will be discussed later).
+Like the prefix, the count has as exception the same packet (as pointed earlier, this will be discussed later).
 
 ### IV (Initialization Vector)
 > ![](http://i.imgur.com/pUd7n8j.png)
@@ -58,15 +58,15 @@ Due to its importance, the payload will be discussed in its [own](./The%20Payloa
 ## Authentication Code
 > ![](http://i.imgur.com/iyWTNuP.png)
 
-Represented by the last 10 bytes of the buffer, this is the portion of the packet which is meant to assure the authenticity and integrity of the rest. 
+Represented by the last 10 bytes of the buffer, this is the portion of the packet meant to ensure the authenticity and integrity of the rest. 
 
 In Grand Chase, it consists in a [MD5](https://en.wikipedia.org/wiki/MD5)-[HMAC](https://en.wikipedia.org/wiki/Hash-based_message_authentication_code) (Hash-based Message Authentication Code). 
 
 > ![](http://i.imgur.com/G7wV9BW.png)
 
-The authentication code calculation is done based on the portion of the packet's buffer shown above (from the first byte after the packet size until the last byte of the encrypted payload). The calculation also takes an 8-byte auth key which is defined at the beginning of the networking session (it will be better detailed in the [last section](./The%20Beginning%20of%20the%20Session.md#the-beginning-of-the-session)).
+The authentication code calculation is done based on the buffer's portion shown above (from the first byte after the packet size until the last byte of the encrypted payload). The calculation also takes in account an 8-byte auth key that is defined at the beginning of the networking session (it will be better detailed in the [last section](./The%20Beginning%20of%20the%20Session.md#the-beginning-of-the-session)).
 
-Normally, a MD5-HMAC would have a size of 16 bytes. But if we take a look at our packet's HMAC we will notice that it's only 10 bytes long. That's because in Grand Chase is truncated, being left with the size of 10 bytes.
+Normally, a MD5-HMAC would have a size of 16 bytes. But if we take a look at our packet's HMAC we will notice that it's only 10 bytes long. That's because, in Grand Chase, it's truncated, being left with the size of 10 bytes.
 > ![](http://i.imgur.com/uTFcywp.png)
 
 In red, you can see the portion of the HMAC present in the packet compared to the entire HMAC calculated to that section of the packet's data.

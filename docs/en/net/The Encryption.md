@@ -3,7 +3,7 @@
 
 The payloads of the Grand Chase's packets are encrypted using the [DES algorithm](https://en.wikipedia.org/wiki/Data_Encryption_Standard) through the [CBC mode](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher_Block_Chaining_.28CBC.29) (Cipher Block Chaining). 
 
-The encryption process takes an _IV_, a 8-byte _key_ and a _plaintext_.
+The encryption process takes an _IV_, an 8-byte _key_ and a _plaintext_.
 * As pointed before, an IV is generated for each packet and is sent together with it;
 * The encryption key is defined at the start of the session like the auth key;
 * The plaintext is the unencrypted payload;
@@ -13,9 +13,9 @@ Through the CBC mode, the data is processed in blocks of 8 bytes each. But what 
 ### Padding
 > ![](http://i.imgur.com/HR4kOAA.png)
 
-The whole thing you see above is the decrypted payload from our packet, but for now, let's limit ourselves only to the part in red.
+The whole thing you see above is the decrypted payload from our packet, but let's limit ourselves to the part in red for now.
 
-This portion of the data is the _padding_. It serves to fill the data until it reaches a length divisible by block size (in our case, 8).
+This portion of the data is the _padding_. Its purpose is to fill the data until it reaches a length divisible by block size (in our case, 8).
 
 Let's take our payload as example. Without padding, it would be 74 bytes long, but 74 is not divisible by 8. The next number divisible by 8 after 74 is 80, so our padding should be 6 bytes long (74 + _6_ = 80). Then we start to count: 00, 01, 02, 03, 04 and 04 again. The last byte of the padding is always equal to the penultimate byte. 
 

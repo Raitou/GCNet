@@ -9,26 +9,26 @@ As previously stated, it's the holder of the most important data in all the pack
 Like the packet buffer, the decrypted payload has its sections: the _header_, the _content_ and the _null bytes padding_. Again, let's explain them one by one.
 > Note I: there are some exceptions to this division like the ping packet, whose payload contains only null bytes.
 
-> Note II: unlike the **packet's header**, all the data in the **payload** is written in the [big-endian](https://en.wikipedia.org/wiki/Endianness#Big-endian) format.
+> Note II: unlike the **packet's header**, most data in the **payload** is written in the [big-endian](https://en.wikipedia.org/wiki/Endianness#Big-endian) format.
 
 ## Header
 > ![](http://i.imgur.com/C19kDWK.png)
 
-The payload's header contains three essential informations: packet _ID_, _content size_ and _compression flag_. Next, we will take a closer look at these values.
+The payload's header contains three essential values: packet _ID_, _content size_ and _compression flag_. Next, we will take a closer look at these.
 
 ### ID
 > ![](http://i.imgur.com/JJfLbND.png)
 
-The ID, as the name suggests, is the packet identifier. It indicates what the packet is meant for, what it is. 
+The ID (or opcode), as the name suggests, is the packet identifier. It indicates what the packet is meant for, what it is. 
 
-For example, the packet with the ID 0x0001 is the packet in which the session keys are defined; the one with the ID 0x001C is the acknowledgement packet SHA_FILENAME_LIST, which serves to inform the client about the files which will be verified through SHA checksum.
+For example, the packet with the ID 0x0001 is the packet in which the session keys are defined; the one with the ID 0x001C is the acknowledgement packet SHA_FILENAME_LIST, which is intended to inform the client about the files which will be verified through SHA checksum.
 
 ### Content Size
 > ![](http://i.imgur.com/pTkORlB.png)
 
 This is the size in bytes of the _content_ of the payload.
 
-In our case, it is _00 00 00 40_ in hex values, denoting that the size is _64_ in decimal. Check for yourself: count each byte from the 1st after the header to the 4th last byte. Your count should reach 64.
+In our case, it's _00 00 00 40_ in hex or _64_ in decimal. Check for yourself: count each byte from the 1st after the header to the 4th last byte. Your count should be 64.
 
 ### Compression Flag
 > ![](http://i.imgur.com/OZSqBEU.png)
@@ -48,7 +48,7 @@ Its structure will vary for each packet type, but there's yet one common "patter
 
 > ![](http://image.prntscr.com/image/276d51bc2b4e4b2e820c1abefad4ab21.png)
   
-The portion marked in purple is an [unicode](https://en.wikipedia.org/wiki/Unicode) string that represents the filename _main.exe_. But what about the piece in red (_00 00 00 10_)? They're a 4-byte integer that represents the size of the following value. In decimal, _00 00 00 10_ is _16_, which is exactly our string's size in bytes.
+The portion marked in purple is an [unicode](https://en.wikipedia.org/wiki/Unicode) string that represents the filename _main.exe_. But what about the piece in red (_00 00 00 10_)? It's a 4-byte integer that represents the size of the following value. In decimal, _00 00 00 10_ is _16_, which is exactly our string's size in bytes.
 
 But remember: there may be values that aren't preceded by its size!
 ## Null Bytes Padding
@@ -58,7 +58,7 @@ It is just an ordinary padding composed by three _00_ (null) bytes at the end of
 
 ## Compression
 
-Some of the Grand Chase's packets have their payload content compressed. 
+Some of the Grand Chase's packets have the contents of their payloads compressed. 
 
 To compress the data, Grand Chase uses [zlib](https://en.wikipedia.org/wiki/Zlib). We can know this because of the presence of one of the zlib headers (_78 01_) in every payload which have its data compressed.
 
