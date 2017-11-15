@@ -85,14 +85,15 @@ namespace GCNet.CoreLib
         /// <returns>The padded data.</returns>
         private byte[] PadData(byte[] data)
         {
-            int distance = 8 - (data.Length % 8); // It's the distance from the length value to the next number divisible by the block size (8).
-            int paddingLength = (distance >= 3) ? (distance) : (8 + distance);
+            // It's the distance from the length value to the next number divisible by the block size (8).
+            int distance = 8 - (data.Length % 8);             
+            int paddingLength = (distance >= 2) ? (distance) : (8 + distance);
 
             byte[] padding = new byte[paddingLength];
 
-            for (byte i = 0; i < (paddingLength - 1); i++)
+            for (byte i = 1; i < paddingLength; i++)
             {
-                padding[i] = i;
+                padding[i - 1] = i;
             }
             padding[paddingLength - 1] = padding[paddingLength - 2]; // Equals the last to the penultimate byte.
 
