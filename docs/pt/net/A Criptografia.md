@@ -40,9 +40,9 @@ else
 {
   paddingLength = 8 + distance;
 }
-for (byte i = 0; i < paddingLength - 1; i++)
+for (byte i = 1; i < paddingLength; i++)
 {
-  padding[i] = i;
+  padding[i - 1] = i;
 }
 padding[paddingLength - 1] = padding[paddingLength - 2];
 ```
