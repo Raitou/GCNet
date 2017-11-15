@@ -54,7 +54,7 @@ Mas lembre-se: podem haver valores que não são precedidos por seu tamanho!
 ## Complemento
 > ![](https://i.imgur.com/9ICryEF.png)
 
-É apenas um preenchimento composto por 4 bytes _00_ (nulos) ao fim de cada payload. 
+É apenas um preenchimento composto por 4 bytes _00_ ao fim de cada payload. 
 
 ## Compressão
 
@@ -69,7 +69,7 @@ Vamos dar uma olhada em um.
 
 Na verdade, apenas a parte destacada em roxo é comprimida: o header e os 4 primeiros bytes do conteúdo permanecem normais, bem como o preenchimento _00 00 00_ no final. 
 
-Esses 4 bytes do conteúdo dos payloads comprimidos (no nosso caso, marcados de verde) são um número inteiro que representa o **tamanho da parte comprimida depois de descomprimida**. Note que, diferentemente dos outros dados do conteúdo, o segundo tamanho é little-endian, sendo _764_ em decimal.
+Esses 4 bytes do conteúdo dos payloads comprimidos (no nosso caso, marcados de azul) são um número inteiro que representa o **tamanho da parte comprimida depois de descomprimida**. Note que, diferentemente dos outros dados do conteúdo, o segundo tamanho é little-endian, sendo _764_ em decimal.
 
 Depois que os dados são descomprimidos, o payload pode ser lido normalmente como qualquer um não comprimido.
 
