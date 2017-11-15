@@ -75,7 +75,7 @@ namespace GCNet.PacketLib
             {
                 byte[] firstPart = Sequence.ReadBlock(Data, 0, 11);
                 byte[] decompressedContent = ZLib.DecompressData(Sequence.ReadBlock(Data, 11, Size - 4));
-                byte[] nullBytesPadding = new byte[3];
+                byte[] nullBytesPadding = new byte[4];
 
                 Data = Sequence.Concat(firstPart, decompressedContent, nullBytesPadding);
             }
