@@ -2,7 +2,7 @@
 
 What you see below is the decrypted payload of our packet (now with the padding removed).
 
-> ![](http://i.imgur.com/nQlqmtm.png)
+> ![](https://i.imgur.com/xhOXPeG.png)
 
 As previously stated, it's the holder of the most important data in all the packet.
 
@@ -16,10 +16,10 @@ Like the packet buffer, the decrypted payload has its sections: the _header_, th
 
 The payload's header contains three essential values: packet _ID_, _content size_ and _compression flag_. Next, we will take a closer look at these.
 
-### ID
+### ID (_Opcode_)
 > ![](http://i.imgur.com/JJfLbND.png)
 
-The ID (or opcode), as the name suggests, is the packet identifier. It indicates what the packet is meant for, what it is. 
+The ID, as the name suggests, is the packet identifier. It indicates what the packet is meant for, what it is. 
 
 For example, the packet with the ID 0x0001 is the packet in which the session keys are defined; the one with the ID 0x001C is the acknowledgement packet SHA_FILENAME_LIST, which is intended to inform the client about the files which will be verified through SHA checksum.
 
@@ -50,11 +50,11 @@ Its structure will vary for each packet type, but there's yet one common "patter
   
 The portion marked in purple is an [unicode](https://en.wikipedia.org/wiki/Unicode) string that represents the filename _main.exe_. But what about the piece in red (_00 00 00 10_)? It's a 4-byte integer that represents the size of the following value. In decimal, _00 00 00 10_ is _16_, which is exactly our string's size in bytes.
 
-But remember: there may be values that aren't preceded by its size!
-## Null Bytes Padding
-> ![](http://i.imgur.com/XKdghFa.png)
+But remember: there may be values that aren't preceded by their sizes!
+## Complement
+> ![](https://i.imgur.com/9ICryEF.png)
 
-It is just an ordinary padding composed by three _00_ (null) bytes at the end of each payload.
+It is just an ordinary padding composed by four _00_ bytes at the end of each payload.
 
 ## Compression
 
@@ -63,13 +63,13 @@ Some of the Grand Chase's packets have the contents of their payloads compressed
 To compress the data, Grand Chase uses [zlib](https://en.wikipedia.org/wiki/Zlib). We can know this because of the presence of one of the zlib headers (_78 01_) in every payload which have its data compressed.
 
 Let's take a look at one compressed payload.
-> ![](http://i.imgur.com/u51tXBH.png)
+> ![](https://i.imgur.com/3t1MGKn.png)
 
 (As you can see in the bytes in red, the compression flag is _true_ and the zlib header is present)
 
-Actually, only the portion highlighted with purple is compressed: the header and the first 4 bytes of the content remains uncompressed, as well as the _00 00 00_ padding at the end.
+Actually, only the portion highlighted with purple is compressed: the header and the first 4 bytes of the content remains uncompressed, as well as the _00 00 00 00_ padding at the end.
 
-These 4 bytes from the content of the compressed payloads (in our case, marked in green) are an integer which represents the **size of the compressed portion after decompressed**. Note that, exceptionally, this second size is little-endian, being _764_ in decimal.
+These 4 bytes from the content of the compressed payloads (in our case, marked in blue) are an integer which represents the **size of the compressed portion after decompressed**. Note that, exceptionally, this second size is little-endian, being _764_ in decimal.
 
 After the data is decompressed, the payload can be read normally like any uncompressed other.
 
