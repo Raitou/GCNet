@@ -6,9 +6,9 @@ In Grand Chase, the encryption and auth keys for the session are randomly genera
 
 Its data would look like this one:
 
-> Note: the packet exposed here is from the season eternal. I haven't checked the packets from other seasons, but it may be different.
+> Note: the packet exposed here is from season eternal. I haven't checked the packets from other seasons, but it may be different.
 
---
+
 > ![](http://i.imgur.com/jD40Gtt.png)
 
 First, let's talk about two things: the _prefix_ and the _count_.
@@ -24,7 +24,7 @@ For this packet, Grand Chase uses two default keys, which are stored by both cli
 * **Default Auth Key:** C0 D3 BD C3 B7 CE B8 B8
 
 Having it explained, let's now analyze the packet payload.
-> ![](http://i.imgur.com/QMBOl73.png)
+> ![](https://i.imgur.com/79FOHrd.png)
 
 It's like any other packet: it has a header, a content and 3 null bytes at the end. Let's focus on the content.
 
