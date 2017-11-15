@@ -2,7 +2,7 @@
 
 O que você vê abaixo é o payload decriptado do nosso pacote (agora com o padding removido).
 
-> ![](http://i.imgur.com/nQlqmtm.png)
+> ![](https://i.imgur.com/xhOXPeG.png)
 
 Como dito anteriormente, ele é o portador das informações mais importantes em todo o packet.
 
@@ -16,7 +16,7 @@ Assim como o buffer do pacote, o payload decriptado tem seus próprios segmentos
 
 O header do payload contém três informações essenciais: _ID_ do pacote, _tamanho do conteúdo_ e _indicador de compressão_. A seguir, nós daremos uma olhada mais de perto nesses valores.
 
-### ID
+### ID (_Opcode_)
 > ![](http://i.imgur.com/JJfLbND.png)
 
 O ID, como o nome sugere, é o identificador do pacote. Ele indica qual o propósito do packet, o que ele é.
@@ -28,7 +28,7 @@ Por exemplo, o pacote de ID 0x0001 é o pacote em que as chaves da sessão são 
 
 Esse é o tamanho em bytes do _conteúdo_ do payload. 
 
-No nosso caso, ele é _00 00 00 40_ em valores hexadecimais, denotando que o tamanho é _64_ em decimal. Veja por si mesmo: conte cada byte do 1º após o header ao 4º último. Sua contagem deverá alcançar 64.
+No nosso caso, ele é _00 00 00 40_ em valores hexadecimais, denotando que o tamanho é _64_ em decimal. Veja por si mesmo: conte cada byte do 1º após o header ao 5º último. Sua contagem deverá alcançar 64.
 
 ### Indicador de Compressão (_Compression Flag_)
 > ![](http://i.imgur.com/OZSqBEU.png)
@@ -51,10 +51,10 @@ Sua estrutura irá variar de packet para packet, mas há, ainda, um "padrão" co
 A porção marcada em roxo é uma _string_ [unicode](https://pt.wikipedia.org/wiki/Unicode) que representa o nome do arquivo _main.exe_. Mas e quanto aos bytes em vermelho (_00 00 00 10_)? Eles são um inteiro de 4 bytes que representa o tamanho do valor que o sucede. Em decimal, _00 00 00 10_ é _16_, que é exatamente o tamanho da nossa string em bytes.
 
 Mas lembre-se: podem haver valores que não são precedidos por seu tamanho!
-## Preenchimento de Bytes Nulos (_Null Bytes Padding_)
-> ![](http://i.imgur.com/XKdghFa.png)
+## Complemento
+> ![](https://i.imgur.com/9ICryEF.png)
 
-É apenas um preenchimento composto por três bytes _00_ (nulos) ao fim de cada payload. 
+É apenas um preenchimento composto por 4 bytes _00_ (nulos) ao fim de cada payload. 
 
 ## Compressão
 
@@ -63,7 +63,7 @@ Alguns dos pacotes do Grand Chase tem o conteúdo de seu payload comprimido.
 Para comprimir dados, o Grand Chase usa a [zlib](https://pt.wikipedia.org/wiki/Zlib). Podemos dizer isso por conta da presença de um dos headers da zlib (_78 01_) em todos os payloads comprimidos.
 
 Vamos dar uma olhada em um.
-> ![](http://i.imgur.com/u51tXBH.png)
+> ![](https://i.imgur.com/3t1MGKn.png)
 
 (Como você pode ver nos bytes em vermelho, o indicador de compressão é _verdadeiro_ e o header da zlib está presente)
 
