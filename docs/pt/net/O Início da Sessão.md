@@ -8,7 +8,7 @@ Seus dados se pareceriam com estes:
 
 > Nota: o packet aqui exposto é da season eternal. Eu não verifiquei os das outras seasons, mas eles podem ser diferentes.
 
---
+
 > ![](http://i.imgur.com/jD40Gtt.png)
 
 Antes de tudo, vamos falar sobre dois aspectos: o _prefixo_ e a _contagem_.
@@ -24,7 +24,7 @@ Para esse packet, o Grand Chase usa duas chaves padrões que são armazenadas po
 * **Chave de Autenticação Padrão:** C0 D3 BD C3 B7 CE B8 B8
 
 Tendo isso explicado, agora vamos analisar o payload do pacote.
-> ![](http://i.imgur.com/QMBOl73.png)
+> ![](https://i.imgur.com/79FOHrd.png)
 
 Ele é como o de qualquer outro: tem um header, um conteúdo, e um preenchimento de bytes nulos ao final. Foquemos o conteúdo.
 
