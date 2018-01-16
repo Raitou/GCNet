@@ -1,0 +1,10 @@
+
+*.csproj
+
+Properties/
+
+obj/Debug/
+
+\.vs/
+
+*.sln

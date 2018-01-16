@@ -29,40 +29,36 @@ namespace GCNet.PacketLib
     /// </summary>
     public sealed class PayloadWriter
     {
-        /// <summary>
-        /// Gets or sets the current content's data.
-        /// </summary>
-        private byte[] Data { get; set; } = new byte[0];
-
+        private byte[] _contentData = new byte[0];
 
         /// <summary>
         /// Builds a payload from the current content's data.
         /// </summary>
-        /// <param name="id">The packet's id.</param>
+        /// <param name="opcode">The packet's opcode.</param>
         /// <returns>A new payload.</returns>
-        public byte[] GetPayload(short id)
+        public byte[] GetPayload(short opcode)
         {
-            byte[] packetId = BigEndian.GetBytes(id);
-            byte[] size = BigEndian.GetBytes(Data.Length);
+            byte[] packetId = BigEndian.GetBytes(opcode);
+            byte[] size = BigEndian.GetBytes(_contentData.Length);
             byte[] compressionFlag = { 0 }; // false
             byte[] padding = { 0, 0, 0, 0 };
 
-            return Sequence.Concat(packetId, size, compressionFlag, Data, padding);
+            return Sequence.Concat(packetId, size, compressionFlag, _contentData, padding);
         }
 
         /// <summary>
         /// Builds a compressed payload from the current content's data.
         /// </summary>
-        /// <param name="id">The packet's id.</param>
+        /// <param name="opcode">The packet's opcode.</param>
         /// <returns>A new compressed payload.</returns>
-        public byte[] GetCompressedPayload(short id)
+        public byte[] GetCompressedPayload(short opcode)
         {
-            byte[] compressedData = ZLib.CompressData(Data);
+            byte[] compressedData = ZLib.CompressData(_contentData);
 
-            byte[] packetId = BigEndian.GetBytes(id);
-            byte[] size = BigEndian.GetBytes(compressedData.Length + 4);
+            byte[] packetId = BigEndian.GetBytes(opcode);
+            byte[] size = BigEndian.GetBytes(compressedData.Length + sizeof(int));
             byte[] compressionFlag = { 1 }; // true
-            byte[] decompressedSize = LittleEndian.GetBytes(Data.Length);
+            byte[] decompressedSize = LittleEndian.GetBytes(_contentData.Length);
             byte[] padding = { 0, 0, 0, 0 };
 
             return Sequence.Concat(packetId, size, compressionFlag, decompressedSize, compressedData, padding);
@@ -137,7 +133,7 @@ namespace GCNet.PacketLib
         /// <param name="bytes">The bytes to be written.</param>
         public void WriteData(byte[] bytes)
         {
-            Data = Sequence.Concat(Data, bytes);
+            _contentData = Sequence.Concat(_contentData, bytes);
         }
     }
 }

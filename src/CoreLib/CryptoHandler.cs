@@ -18,6 +18,7 @@
 
 using GCNet.Util;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace GCNet.CoreLib
 {
@@ -26,18 +27,14 @@ namespace GCNet.CoreLib
     /// </summary>
     public sealed class CryptoHandler
     {
-        /// <summary>
-        /// Gets the current handler's encryption key.
-        /// </summary>
-        public byte[] Key { get; }
-
+        private byte[] _key;
 
         /// <summary>
         /// Initializes a new instance of the CryptoHandler class using the default encryption key.
         /// </summary>
         public CryptoHandler()
         {
-            Key = new byte[] { 0xC7, 0xD8, 0xC4, 0xBF, 0xB5, 0xE9, 0xC0, 0xFD };
+            _key = new byte[] { 0xC7, 0xD8, 0xC4, 0xBF, 0xB5, 0xE9, 0xC0, 0xFD };
         }
 
         /// <summary>
@@ -46,9 +43,8 @@ namespace GCNet.CoreLib
         /// <param name="key">The encryption key which will be used by the crypto handler.</param>
         public CryptoHandler(byte[] key)
         {
-            Key = key;
+            _key = key;
         }
-
 
         /// <summary>
         /// Encrypts the given packet payload data.
@@ -59,7 +55,7 @@ namespace GCNet.CoreLib
         public byte[] EncryptPacket(byte[] payload, byte[] iv)
         {
             byte[] paddedData = PadData(payload);
-            return DESEncryption.EncryptData(paddedData, iv, Key);
+            return EncryptData(paddedData, iv, _key);
         }
 
         /// <summary>
@@ -72,24 +68,38 @@ namespace GCNet.CoreLib
             byte[] iv = Sequence.ReadBlock(packetData, 8, 8);
             byte[] encryptedData = Sequence.ReadBlock(packetData, 16, packetData.Length - 10 - 16);
 
-            byte[] decryptedData = DESEncryption.DecryptData(encryptedData, iv, Key);
-            int paddingLength = (decryptedData.Last() + 2);
+            byte[] decryptedData = DecryptData(encryptedData, iv, _key);
+            int paddingLength = decryptedData.Last() + 2;
 
             return Sequence.ReadBlock(decryptedData, 0, decryptedData.Length - paddingLength);
         }
 
-        /// <summary>
-        /// Pads the specified data accordingly to the encryption padding of Grand Chase packets.
-        /// </summary>
-        /// <param name="data">The data to be padded.</param>
-        /// <returns>The padded data.</returns>
+        private static byte[] EncryptData(byte[] data, byte[] iv, byte[] key)
+        {
+            using (var desProvider = new DESCryptoServiceProvider() { Mode = CipherMode.CBC, Padding = PaddingMode.None })
+            using (ICryptoTransform encryptor = desProvider.CreateEncryptor(key, iv))
+            {
+                return encryptor.TransformFinalBlock(data, 0, data.Length);
+            }
+        }
+
+        private static byte[] DecryptData(byte[] data, byte[] iv, byte[] key)
+        {
+            using (var desProvider = new DESCryptoServiceProvider() { Mode = CipherMode.CBC, Padding = PaddingMode.None })
+            using (ICryptoTransform decryptor = desProvider.CreateDecryptor(key, iv))
+            {
+                return decryptor.TransformFinalBlock(data, 0, data.Length);
+            }
+        }
+
         private byte[] PadData(byte[] data)
         {
-            // It's the distance from the length value to the next number divisible by the block size (8).
-            int distance = 8 - (data.Length % 8);             
-            int paddingLength = (distance >= 2) ? (distance) : (8 + distance);
+            const int ENCRYPTION_BLOCK_LENGTH = 8;
 
-            byte[] padding = new byte[paddingLength];
+            int distance = ENCRYPTION_BLOCK_LENGTH - data.Length % ENCRYPTION_BLOCK_LENGTH;
+            int paddingLength = distance >= 2 ? distance : ENCRYPTION_BLOCK_LENGTH + distance;
+
+            var padding = new byte[paddingLength];
 
             for (byte i = 1; i < paddingLength; i++)
             {

@@ -21,32 +21,20 @@ using System.IO;
 
 namespace GCNet.CoreLib
 {
-    /// <summary>
-    /// Handles ZLib compression operations.
-    /// </summary>
-    public static class ZLib
+    internal static class ZLib
     {
-        /// <summary>
-        /// Compresses the specified block of data.
-        /// </summary>
-        /// <param name="data">The data to be compressed.</param>
-        /// <returns>The compressed data.</returns>
         public static byte[] CompressData(byte[] data)
         {
-            MemoryStream ms = new MemoryStream();
-
-            using (ZlibStream compressor = new ZlibStream(ms, CompressionMode.Compress, CompressionLevel.Level1))
+            using (var ms = new MemoryStream())
             {
-                compressor.Write(data, 0, data.Length);
+                using (var compressor = new ZlibStream(ms, CompressionMode.Compress, CompressionLevel.Level1))
+                {
+                    compressor.Write(data, 0, data.Length);
+                    return ms.ToArray();
+                }
             }
-            return ms.ToArray();
         }
 
-        /// <summary>
-        /// Decompresses the specified block of data.
-        /// </summary>
-        /// <param name="data">The data to be decompressed.</param>
-        /// <returns>The decompressed data.</returns>
         public static byte[] DecompressData(byte[] data)
         {
             return ZlibStream.UncompressBuffer(data);

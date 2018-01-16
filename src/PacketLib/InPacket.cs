@@ -32,56 +32,53 @@ namespace GCNet.PacketLib
         /// </summary>
         public short Size
         {
-            get { return LittleEndian.GetInt16(PacketData, 0); }
+            get { return LittleEndian.GetInt16(_packetData, 0); }
         }
+
         /// <summary>
         /// Gets the prefix of the current packet.
         /// </summary>
         public short Prefix
         {
-            get { return LittleEndian.GetInt16(PacketData, 2); }
+            get { return LittleEndian.GetInt16(_packetData, 2); }
         }
+
         /// <summary>
         /// Gets the count in the current packet's header.
         /// </summary>
         public int Count
         {
-            get { return LittleEndian.GetInt32(PacketData, 4); }
+            get { return LittleEndian.GetInt32(_packetData, 4); }
         }
+
         /// <summary>
         /// Gets the IV of the current packet.
         /// </summary>
         public byte[] IV
         {
-            get { return Sequence.ReadBlock(PacketData, 8, 8); }
+            get { return Sequence.ReadBlock(_packetData, 8, 8); }
         }
+
         /// <summary>
         /// Gets the current packet's decrypted payload.
         /// </summary>
         public byte[] Payload
         {
-            get { return CryptoHandler.DecryptPacket(PacketData); }
+            get { return _cryptoHandler.DecryptPacket(_packetData); }
         }
 
-        /// <summary>
-        /// Gets the current packet's data.
-        /// </summary>
-        private byte[] PacketData { get; }
-        /// <summary>
-        /// Gets the current packet's crypto handler.
-        /// </summary>
-        private CryptoHandler CryptoHandler { get; }
-
+        private CryptoHandler _cryptoHandler;
+        private byte[] _packetData;
 
         /// <summary>
         /// Initializes a new instance of InPacket from the given packet buffer and crypto handler.
         /// </summary>
-        /// <param name="packetBuffer">The packet buffer the way it was received.</param>
-        /// <param name="crypto">The current crypto handler.</param>
-        public InPacket(byte[] packetBuffer, CryptoHandler crypto)
+        /// <param name="packetData">The packet buffer the way it was received.</param>
+        /// <param name="cryptoHandler">The current crypto handler.</param>
+        public InPacket(byte[] packetData, CryptoHandler cryptoHandler)
         {
-            PacketData = packetBuffer;
-            CryptoHandler = crypto;
+            _packetData = packetData;
+            _cryptoHandler = cryptoHandler;
         }
     }
 }

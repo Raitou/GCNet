@@ -21,45 +21,24 @@ using System.Linq;
 
 namespace GCNet.Util
 {
-    /// <summary>
-    /// Provides basic sequences handling functions.
-    /// </summary>
     internal static class Sequence
     {
-        /// <summary>
-        /// Reads a range of elements from a sequence starting at a specified offset.
-        /// </summary>
-        /// <param name="source">The sequence from where the block will be read.</param>
-        /// <param name="offset">the index where the reading begins.</param>
-        /// <param name="length">The number of elements to be read.</param>
-        /// <returns>The read block.</returns>
         public static T[] ReadBlock<T>(T[] source, int offset, int length)
         {
-            T[] outputSeq = new T[length];
+            var outputSeq = new T[length];
             Array.Copy(source, offset, outputSeq, 0, length);
 
             return outputSeq;
         }
 
-        /// <summary>
-        /// Concatenate N sequences.
-        /// </summary>
-        /// <param name="sequences">The sequences to be concatenated.</param>
-        /// <returns>The N sequences concatenated.</returns>
         public static T[] Concat<T>(params T[][] sequences)
         {
             return sequences.Aggregate(Concat);
         }
 
-        /// <summary>
-        /// Concatenates two sequences.
-        /// </summary>
-        /// <param name="firstSeq">The first sequence to be concatenated.</param>
-        /// <param name="secondSeq">The second sequence to be concatenated.</param>
-        /// <returns>Both sequences concatenated.</returns>
         private static T[] Concat<T>(T[] firstSeq, T[] secondSeq)
         {
-            T[] outputSeq = new T[firstSeq.Length + secondSeq.Length];
+            var outputSeq = new T[firstSeq.Length + secondSeq.Length];
 
             Array.Copy(firstSeq, 0, outputSeq, 0, firstSeq.Length);
             Array.Copy(secondSeq, 0, outputSeq, firstSeq.Length, secondSeq.Length);

@@ -32,27 +32,30 @@ namespace GCNet.PacketLib
         /// Gets the packet data (ready to be sent) of the current outgoing packet.
         /// </summary>
         public byte[] PacketData { get; }
-        
-        
+
+        private const int PACKET_HEADER_LENGTH = 16;
+        private const int PACKET_FOOTER_LENGTH = 10;
+
         /// <summary>
-        /// Initializes a new instance of OutPacket from the given payload data, crypto handler, auth handler, prefix and count.
+        /// Initializes a new instance of OutPacket from the given payload data, crypto handler, auth
+        /// handler, prefix and count.
         /// </summary>
         /// <param name="payload">The ready payload data.</param>
-        /// <param name="crypto">The crypto handler to be used.</param>
-        /// <param name="auth">The auth handler to be used.</param>
+        /// <param name="cryptoHandler">The crypto handler to be used.</param>
+        /// <param name="authHandler">The auth handler to be used.</param>
         /// <param name="prefix">The packet's prefix.</param>
         /// <param name="count">The packet's count.</param>
-        public OutPacket(byte[] payload, CryptoHandler crypto, AuthHandler auth, short prefix, int count)
+        public OutPacket(byte[] payload, CryptoHandler cryptoHandler, AuthHandler authHandler, short prefix, int count)
         {
             byte[] packetPrefix = LittleEndian.GetBytes(prefix);
             byte[] packetCount = LittleEndian.GetBytes(count);
             byte[] iv = Generate.IV();
-            byte[] encryptedData = crypto.EncryptPacket(payload, iv);
+            byte[] encryptedData = cryptoHandler.EncryptPacket(payload, iv);
 
-            byte[] size = LittleEndian.GetBytes(Convert.ToInt16(16 + encryptedData.Length + 10));
+            byte[] size = LittleEndian.GetBytes(Convert.ToInt16(PACKET_HEADER_LENGTH + encryptedData.Length + PACKET_FOOTER_LENGTH));
 
             byte[] authData = Sequence.Concat(packetPrefix, packetCount, iv, encryptedData);
-            byte[] hmac = auth.GetHmac(authData);
+            byte[] hmac = authHandler.GetHmac(authData);
 
             PacketData = Sequence.Concat(size, authData, hmac);
         }

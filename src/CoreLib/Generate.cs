@@ -32,7 +32,7 @@ namespace GCNet.CoreLib
         /// <returns>The new generated key.</returns>
         public static byte[] Key()
         {
-            byte[] outputKey = new byte[8];            
+            var outputKey = new byte[8];
 
             using (var rngProvider = new RNGCryptoServiceProvider())
             {
@@ -40,7 +40,7 @@ namespace GCNet.CoreLib
             }
             return outputKey;
         }
-        
+
         /// <summary>
         /// Generates a new initialization vector (IV).
         /// </summary>
@@ -50,7 +50,7 @@ namespace GCNet.CoreLib
             byte[] outputIV = new byte[8];
             byte ivByte;
 
-            Random random = new Random();
+            var random = new Random();
             ivByte = (byte)random.Next(0x00, 0xFF);
 
             for (int i = 0; i < outputIV.Length; i++)

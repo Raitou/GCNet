@@ -29,58 +29,55 @@ namespace GCNet.PacketLib
     public sealed class PayloadReader
     {
         /// <summary>
-        /// Gets the ID of the current payload's packet.
+        /// Gets the operation code (opcode) of the current payload's packet.
         /// </summary>
-        public short Id
+        public short Opcode
         {
-            get { return BigEndian.GetInt16(Data, 0); }
+            get { return BigEndian.GetInt16(_payloadData, OPCODE_OFFSET); }
         }
+
         /// <summary>
-        /// Gets the size of the current payload's content.
+        /// Gets the length of the current payload's content in bytes.
         /// </summary>
-        public int Size
+        public int ContentLength
         {
-            get { return BigEndian.GetInt32(Data, 2); }
+            get { return BigEndian.GetInt32(_payloadData, CONTENT_LENGTH_OFFSET); }
         }
+
         /// <summary>
         /// Gets the value of the current payload's compression flag.
         /// </summary>
         public bool CompressionFlag
         {
-            get { return (Data[6] == 1); }
+            get { return _payloadData[COMPRESSION_FLAG_OFFSET] == 1; }
         }
-        /// <summary>
-        /// Gets the current payload's data.
-        /// </summary>
-        byte[] Data { get; }
+
+        private const int OPCODE_OFFSET = 0;
+        private const int CONTENT_LENGTH_OFFSET = 2;
+        private const int COMPRESSION_FLAG_OFFSET = 6;
+
+        private byte[] _payloadData;
+        private int _position = 7;
 
         /// <summary>
-        /// Gets or sets the current reading position.
-        /// </summary>
-        private int Position { get; set; } = 7;
-
-
-        /// <summary>
-        /// Initializes a new instance of PayloadReader using the specified payload data. If the payload is compressed, it is automatically decompressed.
+        /// Initializes a new instance of PayloadReader using the specified payload data. If the
+        /// payload is compressed, it is automatically decompressed.
         /// </summary>
         /// <param name="payload">The payload data to be read.</param>
-        /// <remarks>
-        /// The null bytes padding is ignored by the reader.
-        /// </remarks>
+        /// <remarks>The null bytes padding is ignored by the reader.</remarks>
         public PayloadReader(byte[] payload)
         {
-            Data = payload;
+            _payloadData = payload;
 
             if (CompressionFlag)
             {
-                byte[] firstPart = Sequence.ReadBlock(Data, 0, 11);
-                byte[] decompressedContent = ZLib.DecompressData(Sequence.ReadBlock(Data, 11, Size - 4));
-                byte[] nullBytesPadding = new byte[4];
+                byte[] firstPart = Sequence.ReadBlock(_payloadData, 0, 11);
+                byte[] decompressedContent = ZLib.DecompressData(Sequence.ReadBlock(_payloadData, 11, ContentLength - sizeof(int)));
+                byte[] zeroesPadding = new byte[4];
 
-                Data = Sequence.Concat(firstPart, decompressedContent, nullBytesPadding);
+                _payloadData = Sequence.Concat(firstPart, decompressedContent, zeroesPadding);
             }
         }
-
 
         /// <summary>
         /// Skips a specified amount of bytes.
@@ -88,7 +85,7 @@ namespace GCNet.PacketLib
         /// <param name="count">The number of bytes to be skipped.</param>
         public void Skip(int count)
         {
-            Position += count;
+            _position += count;
         }
 
         /// <summary>
@@ -97,7 +94,7 @@ namespace GCNet.PacketLib
         /// <returns>The next byte.</returns>
         public byte ReadByte()
         {
-            return Data[Position++];
+            return _payloadData[_position++];
         }
 
         /// <summary>
@@ -106,7 +103,7 @@ namespace GCNet.PacketLib
         /// <returns>The next boolean.</returns>
         public bool ReadBool()
         {
-            return (ReadByte() == 1);
+            return ReadByte() == 1;
         }
 
         /// <summary>
@@ -115,7 +112,10 @@ namespace GCNet.PacketLib
         /// <returns>The next 16-bit integer.</returns>
         public short ReadInt16()
         {
-            return BigEndian.GetInt16(Data, Position += sizeof(short));
+            short int16 = BigEndian.GetInt16(_payloadData, _position);
+            _position += sizeof(short);
+
+            return int16;
         }
 
         /// <summary>
@@ -124,7 +124,10 @@ namespace GCNet.PacketLib
         /// <returns>The next 32-bit integer.</returns>
         public int ReadInt32()
         {
-            return BigEndian.GetInt32(Data, Position += sizeof(int));
+            int int32 = BigEndian.GetInt32(_payloadData, _position);
+            _position += sizeof(int);
+
+            return int32;
         }
 
         /// <summary>
@@ -133,7 +136,10 @@ namespace GCNet.PacketLib
         /// <returns>The next 64-bit integer.</returns>
         public long ReadInt64()
         {
-            return BigEndian.GetInt64(Data, Position += sizeof(long));
+            long int64 = BigEndian.GetInt64(_payloadData, _position);
+            _position += sizeof(long);
+
+            return int64;
         }
 
         /// <summary>
@@ -147,7 +153,8 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
-        /// Reads an unicode string from the payload's content and advances the current position by the string length.
+        /// Reads an unicode string from the payload's content and advances the current position by
+        /// the string length.
         /// </summary>
         /// <param name="length">The unicode string length.</param>
         /// <returns>The next unicode string.</returns>
@@ -157,15 +164,17 @@ namespace GCNet.PacketLib
         }
 
         /// <summary>
-        /// Reads the specified number of bytes from 'Data' into a byte array and advances the current position by that number of bytes.
+        /// Reads the specified number of bytes from 'Data' into a byte array and advances the
+        /// current position by that number of bytes.
         /// </summary>
         /// <param name="count">The number of bytes to be read.</param>
         /// <returns>The read bytes.</returns>
         public byte[] ReadBytes(int count)
         {
-	    byte[] data = Sequence.ReadBlock(Data, Position, count);
-            Position += count;
-	    return data;
+            byte[] data = Sequence.ReadBlock(_payloadData, _position, count);
+            _position += count;
+
+            return data;
         }
     }
 }

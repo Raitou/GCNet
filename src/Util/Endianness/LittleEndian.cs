@@ -18,29 +18,14 @@
 
 namespace GCNet.Util.Endianness
 {
-    /// <summary>
-    /// Provides handling functions for little endian data.
-    /// </summary>
     internal static class LittleEndian
     {
-        /// <summary>
-        /// Converts 2 bytes from an array of bytes to a 16-bit integer at a specified index.
-        /// </summary>
-        /// <param name="bytes">The source byte array.</param>
-        /// <param name="index">The index where the integer value begins.</param>
-        /// <returns>A 16-bit integer.</returns>
         public static short GetInt16(byte[] bytes, int index)
         {
             return (short)
                 ((bytes[index]) | (bytes[index + 1] << 8));
         }
 
-        /// <summary>
-        /// Converts 4 bytes from an array of bytes to a 32-bit integer at a specified index.
-        /// </summary>
-        /// <param name="bytes">The source byte array.</param>
-        /// <param name="index">The index where the integer value begins.</param>
-        /// <returns>A 32-bit integer.</returns>
         public static int GetInt32(byte[] bytes, int index)
         {
             return (bytes[index]) |
@@ -49,11 +34,6 @@ namespace GCNet.Util.Endianness
                    (bytes[index + 3]) << 24;
         }
 
-        /// <summary>
-        /// Converts a 16-bit integer to its little endian representation in bytes.
-        /// </summary>
-        /// <param name="int16">The integer to be converted.</param>
-        /// <returns>The little endian representation of the integer in bytes.</returns>
         public static byte[] GetBytes(short int16)
         {
             byte[] bytes = new byte[sizeof(short)];
@@ -64,11 +44,6 @@ namespace GCNet.Util.Endianness
             return bytes;
         }
 
-        /// <summary>
-        /// Converts a 32-bit integer to its little endian representation in bytes.
-        /// </summary>
-        /// <param name="int32">The integer to be converted.</param>
-        /// <returns>The little endian representation of the integer in bytes.</returns>
         public static byte[] GetBytes(int int32)
         {
             byte[] bytes = new byte[sizeof(int)];

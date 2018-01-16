@@ -18,29 +18,14 @@
 
 namespace GCNet.Util.Endianness
 {
-    /// <summary>
-    /// Provides handling functions for big endian data.
-    /// </summary>
     internal static class BigEndian
     {
-        /// <summary>
-        /// Converts 2 bytes from an array of bytes to a 16-bit integer at a specified index.
-        /// </summary>
-        /// <param name="bytes">The source byte array.</param>
-        /// <param name="index">The index where the integer value begins.</param>
-        /// <returns>A 16-bit integer.</returns>
         public static short GetInt16(byte[] bytes, int index)
         {
             return (short)
                 ((bytes[index] << 8) | (bytes[index + 1]));
         }
 
-        /// <summary>
-        /// Converts 4 bytes from an array of bytes to a 32-bit integer at a specified index.
-        /// </summary>
-        /// <param name="bytes">The source byte array.</param>
-        /// <param name="index">The index where the integer value begins.</param>
-        /// <returns>A 32-bit integer.</returns>
         public static int GetInt32(byte[] bytes, int index)
         {
             return (bytes[index] << 24) |
@@ -49,12 +34,6 @@ namespace GCNet.Util.Endianness
                    (bytes[index + 3]);
         }
 
-        /// <summary>
-        /// Converts 8 bytes from an array of bytes to a 64-bit integer at a specified index.
-        /// </summary>
-        /// <param name="bytes">The source byte array.</param>
-        /// <param name="index">The index where the integer value begins.</param>
-        /// <returns>A 64-bit integer.</returns>
         public static long GetInt64(byte[] bytes, int index)
         {
             return (bytes[index] << 56) |
@@ -67,11 +46,6 @@ namespace GCNet.Util.Endianness
                    (bytes[index + 7]);
         }
 
-        /// <summary>
-        /// Converts a 16-bit integer to its big endian representation in bytes.
-        /// </summary>
-        /// <param name="int16">The integer to be converted.</param>
-        /// <returns>The big endian representation of the integer in bytes.</returns>
         public static byte[] GetBytes(short int16)
         {
             byte[] bytes = new byte[sizeof(short)];
@@ -82,11 +56,6 @@ namespace GCNet.Util.Endianness
             return bytes;
         }
 
-        /// <summary>
-        /// Converts a 32-bit integer to its big endian representation in bytes.
-        /// </summary>
-        /// <param name="int32">The integer to be converted.</param>
-        /// <returns>The big endian representation of the integer in bytes.</returns>
         public static byte[] GetBytes(int int32)
         {
             byte[] bytes = new byte[sizeof(int)];
@@ -99,11 +68,6 @@ namespace GCNet.Util.Endianness
             return bytes;
         }
 
-        /// <summary>
-        /// Converts a 64-bit integer to its big endian representation in bytes.
-        /// </summary>
-        /// <param name="int64">The integer to be converted.</param>
-        /// <returns>The big endian representation of the integer in bytes.</returns>
         public static byte[] GetBytes(long int64)
         {
             byte[] bytes = new byte[sizeof(long)];
