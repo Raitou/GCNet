@@ -8,3 +8,5 @@ obj/Debug/
 \.vs/
 
 *.sln
+
+bin/
