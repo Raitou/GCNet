@@ -125,4 +125,4 @@ Os 4 primeiros bytes do conteúdo dos payloads comprimidos (no nosso caso, marca
 
 Depois que os dados são descomprimidos, o conteúdo pode ser lido normalmente como o de qualquer payload sem compressão.
 
-**Continue lendo**: [A Configuração do Protocolo de Segurança](./A%20Configuração%20do%20Protocolo%20de%20Segurança#A-Configuração-do-Protocolo-de-Segurança)
+**Continue lendo**: [A Configuração do Protocolo de Segurança](./A%20Configuração%20do%20Protocolo%20de%20Segurança.md#A-Configuração-do-Protocolo-de-Segurança)

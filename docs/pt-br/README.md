@@ -5,4 +5,4 @@ Este tópico irá abordar os aspectos mais relevantes da rede do Grand Chase, ex
 * [A Camada de Segurança](./A%20Camada%20de%20Segurança.md#a-camada-de-segurança)
 * [A Criptografia](./A%20Criptografia.md#a-criptografia)
 * [A Camada do Payload](./A%20Camada%20do%20Payload.md#a-camada-do-payload)
-* [O Início da Sessão](./A%20Configuração%20do%20Protocolo%20de%20Segurança.md#A-Configuração-do-Protocolo-de-Segurança)
+* [A Configuração do Protocolo de Segurança](./A%20Configuração%20do%20Protocolo%20de%20Segurança.md#A-Configuração-do-Protocolo-de-Segurança)
